@@ -1,0 +1,152 @@
+import { ConvexHttpClient } from 'convex/browser';
+import type { Flight, ScoreData, PlayerScore, HoleScore } from '../types';
+
+const CONVEX_URL = import.meta.env.VITE_CONVEX_URL || 'http://103.75.101.39:3252';
+const ADMIN_KEY = import.meta.env.VITE_CONVEX_ADMIN_KEY || 'golf-pangjat-staging|01785a23a0a947bc815b5d3a8614354ab56f92ac09afea3dc1a9258f193116f7f03a373c9d';
+const CACHE_DURATION = 30000; // 30 seconds
+
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+class ConvexService {
+  private client: ConvexHttpClient;
+  private flightsCache: CacheEntry<Flight[]> | null = null;
+
+  constructor() {
+    this.client = new ConvexHttpClient(CONVEX_URL);
+    // Set admin authentication
+    this.client.setAuth(ADMIN_KEY);
+  }
+
+  /**
+   * Make a direct HTTP request to Convex API
+   */
+  private async makeRequest(functionPath: string, args: any = {}): Promise<any> {
+    try {
+      const response = await fetch(`${CONVEX_URL}/api/query`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Convex ${ADMIN_KEY}`,
+        },
+        body: JSON.stringify({
+          path: functionPath,
+          args: args,
+          format: 'json',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.status === 'error') {
+        throw new Error(data.errorMessage || 'Convex query failed');
+      }
+
+      return data.value;
+    } catch (error) {
+      console.error(`Error calling ${functionPath}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all flights with player data
+   * Implements 30-second caching to reduce API calls
+   */
+  async getFlights(): Promise<Flight[]> {
+    const now = Date.now();
+    
+    // Check cache validity
+    if (this.flightsCache && (now - this.flightsCache.timestamp) < CACHE_DURATION) {
+      return this.flightsCache.data;
+    }
+
+    try {
+      // Query flights with players using the existing Convex function
+      const flights = await this.makeRequest('flights:getAllWithPlayers');
+      
+      // Update cache
+      this.flightsCache = {
+        data: flights as Flight[],
+        timestamp: now,
+      };
+
+      return flights as Flight[];
+    } catch (error) {
+      console.error('Error fetching flights:', error);
+      throw new Error('Failed to fetch flights from Convex. Please check your connection.');
+    }
+  }
+
+  /**
+   * Get scoring data for a specific flight
+   */
+  async getFlightScore(flightId: string): Promise<ScoreData> {
+    try {
+      // Fetch flight details
+      const flights = await this.getFlights();
+      const flight = flights.find(f => f._id === flightId);
+      
+      if (!flight) {
+        throw new Error('Flight not found');
+      }
+
+      // Fetch scores for this flight
+      const scores = await this.makeRequest('tablet_scores:getByFlight', { flightId });
+
+      // Fetch player details
+      const players = await this.makeRequest('flight_players:getByFlight', { flightId });
+
+      // Transform data into ScoreData format
+      const playerScores: PlayerScore[] = players.map((player: any) => {
+        // Find scores for this player
+        const playerScoreData = scores.filter((s: any) => s.player_id === player._id);
+        
+        // Transform to HoleScore format
+        const holeScores: HoleScore[] = playerScoreData.map((s: any) => ({
+          holeNumber: s.hole_number,
+          strokes: s.strokes,
+          par: s.par || 4, // Default par if not provided
+          putts: s.putts,
+        }));
+
+        // Calculate total score
+        const totalScore = holeScores.reduce((sum, hole) => sum + hole.strokes, 0);
+
+        return {
+          playerId: player._id,
+          playerName: player.name,
+          scores: holeScores,
+          totalScore,
+          handicap: player.handicap,
+        };
+      });
+
+      return {
+        flightId: flight._id,
+        flightName: flight.flight_name,
+        teeOffTime: flight.tee_off_time,
+        players: playerScores,
+      };
+    } catch (error) {
+      console.error('Error fetching flight score:', error);
+      throw new Error('Failed to fetch scoring data. Please try again.');
+    }
+  }
+
+  /**
+   * Clear the flights cache (useful for manual refresh)
+   */
+  clearCache(): void {
+    this.flightsCache = null;
+  }
+}
+
+// Export singleton instance
+export const convexService = new ConvexService();

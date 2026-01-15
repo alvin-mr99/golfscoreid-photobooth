@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* Disable context menu for kiosk mode */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Prevent right-click */
+body {
+  -webkit-touch-callout: none;
+}
+
+/* Print Styles */
+@media print {
+  /* Hide everything except print container */
+  body > *:not(#print-container) {
+    display: none !important;
+  }
+  
+  #print-container {
+    display: block !important;
+  }
+  
+  /* Reset print container styles */
+  #print-container * {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+}
+

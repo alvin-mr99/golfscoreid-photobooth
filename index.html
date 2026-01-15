@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GolfScoreID Photo Booth</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Kiosk Mode: Prevent keyboard shortcuts -->
+    <script>
+      // Prevent common keyboard shortcuts for kiosk mode
+      document.addEventListener('keydown', function(e) {
+        // Prevent F11 (fullscreen toggle)
+        if (e.key === 'F11') {
+          e.preventDefault();
+        }
+        // Prevent Alt+F4 (close window)
+        if (e.altKey && e.key === 'F4') {
+          e.preventDefault();
+        }
+        // Prevent Ctrl+W (close tab)
+        if (e.ctrlKey && e.key === 'w') {
+          e.preventDefault();
+        }
+        // Prevent Ctrl+Q (quit)
+        if (e.ctrlKey && e.key === 'q') {
+          e.preventDefault();
+        }
+        // Prevent Ctrl+Shift+Q (quit all)
+        if (e.ctrlKey && e.shiftKey && e.key === 'Q') {
+          e.preventDefault();
+        }
+      });
+
+      // Prevent right-click context menu
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+      });
+    </script>
+  </body>
+</html>
