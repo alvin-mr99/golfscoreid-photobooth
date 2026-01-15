@@ -77,10 +77,10 @@ export function WelcomePage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen w-full overflow-hidden">
       {/* Background Image with Subtle Overlay */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="fixed inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: 'url(/background.jpg)' }}
       >
         {/* Reduced opacity overlay for better background visibility */}
@@ -109,7 +109,7 @@ export function WelcomePage() {
           </div>
           
           <h1 className="text-7xl md:text-8xl font-bold mb-6 tracking-tight">
-            <span className="inline-block px-6 py-3 bg-gradient-to-r from-green-400 via-emerald-300 to-green-400 bg-clip-text text-transparent animate-gradient drop-shadow-2xl" style={{ textShadow: '0 0 40px rgba(74, 222, 128, 0.3)' }}>
+            <span className="inline-block px-6 py-3 bg-gradient-to-r from-[#19f3b7]  to-[#19f3b7] bg-clip-text text-transparent  drop-shadow-2xl" style={{ textShadow: '0 0 40px rgba(74, 222, 128, 0.3)' }}>
               GolfScoreID
             </span>
             <br />

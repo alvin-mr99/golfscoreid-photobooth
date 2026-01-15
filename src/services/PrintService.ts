@@ -114,7 +114,7 @@ class PrintService {
         ${isPrint ? '@media print {' : ''}
           @page {
             size: A4 landscape;
-            margin: 0.8cm;
+            margin: 0.6cm;
           }
           
           * {
@@ -137,8 +137,8 @@ class PrintService {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 3px solid #16a34a;
             position: relative;
           }
@@ -199,7 +199,7 @@ class PrintService {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             flex-wrap: wrap;
           }
           
@@ -207,7 +207,7 @@ class PrintService {
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            padding: 5px 12px;
+            padding: 4px 10px;
             background: #f3f4f6;
             border-radius: 8px;
             border: 1px solid #d1d5db;
@@ -230,8 +230,8 @@ class PrintService {
             display: flex;
             justify-content: center;
             gap: 12px;
-            margin-bottom: 12px;
-            padding: 8px;
+            margin-bottom: 8px;
+            padding: 6px;
             background: #f9fafb;
             border-radius: 8px;
             flex-wrap: wrap;
@@ -282,7 +282,7 @@ class PrintService {
           .score-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-size: 9px;
           }
           
@@ -422,23 +422,23 @@ class PrintService {
           }
           
           .photos-section {
-            margin-top: 20px;
+            margin-top: 12px;
             page-break-before: auto;
           }
           
           .photos-section h2 {
-            font-size: 16px;
-            margin-bottom: 12px;
+            font-size: 14px;
+            margin-bottom: 8px;
             color: #16a34a;
             border-bottom: 2px solid #16a34a;
-            padding-bottom: 5px;
+            padding-bottom: 4px;
           }
           
           .photos-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 15px;
+            gap: 10px;
+            margin-bottom: 10px;
           }
           
           .photo-item {
@@ -455,11 +455,11 @@ class PrintService {
           }
           
           .print-footer {
-            margin-top: 15px;
-            padding-top: 10px;
+            margin-top: 8px;
+            padding-top: 6px;
             border-top: 2px solid #ddd;
             text-align: center;
-            font-size: 10px;
+            font-size: 9px;
             color: #666;
           }
         ${isPrint ? '}' : ''}
@@ -622,7 +622,7 @@ class PrintService {
         
         <!-- Footer -->
         <div class="print-footer">
-          <p>Printed on ${formatDate(Date.now())} at ${formatTime(Date.now())} • GolfScoreID • Created by PT DECOM FENO MAHAKA</p>
+          <p>${formatDate(Date.now())} at ${formatTime(Date.now())} • GolfScoreID • Created by PT DECOM FENO MAHAKA</p>
         </div>
       </div>
     `;

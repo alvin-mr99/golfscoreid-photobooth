@@ -18,7 +18,7 @@ class CameraService {
         video: {
           width: { ideal: 1920 },
           height: { ideal: 1080 },
-          facingMode: 'user', // Front-facing camera preferred
+          facingMode: 'environment', // Back-facing camera (landscape mode)
         },
         audio: false,
       });
@@ -59,6 +59,7 @@ class CameraService {
         throw new Error('Failed to get canvas context');
       }
 
+      // Draw image in landscape mode (no rotation)
       context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
       // Convert canvas to data URL (JPEG format for smaller file size)

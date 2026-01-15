@@ -175,7 +175,7 @@ export function PhotoBooth({ onPhotoCapture, currentPhotoCount }: PhotoBoothProp
       )}
 
       {/* Video Preview */}
-      <div className="relative aspect-video bg-black">
+      <div className="relative aspect-video bg-black overflow-hidden">
         <video
           ref={videoRef}
           autoPlay

@@ -9,7 +9,7 @@ import {
 import { convexService } from '../services/ConvexService';
 import type { ScoreData, CapturedPhoto } from '../types';
 
-const POST_PRINT_TIMEOUT = 3000; // 5 seconds
+const POST_PRINT_TIMEOUT = 2000; // 5 seconds
 
 export function ScorePhotoPage() {
   const { flightId } = useParams<{ flightId: string }>();
@@ -172,12 +172,12 @@ export function ScorePhotoPage() {
   // Print success overlay
   if (showPrintSuccess) {
     return (
-      <div className="relative min-h-screen overflow-hidden">
+      <div className="relative min-h-screen w-full overflow-hidden">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="fixed inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: 'url(/background-2.jpg)' }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-green-900/40 to-black/50"></div>
+          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-black/50 via-green-900/40 to-black/50"></div>
         </div>
         
         {/* Animated Confetti Effect */}
