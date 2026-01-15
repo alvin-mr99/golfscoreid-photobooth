@@ -4,6 +4,11 @@ export interface Flight {
   flight_name: string;
   tee_off_time: number;
   status: string;
+  start_hole?: number;
+  game_mode?: string;
+  course_type?: string;
+  scoring_system?: string;
+  course_id?: string;
   players: FlightPlayer[];
   created_at: number;
 }
@@ -15,6 +20,7 @@ export interface FlightPlayer {
   phone_number?: string;
   rv_id?: string;
   payment_status?: string;
+  handicap?: number;
 }
 
 // Score Models
@@ -22,7 +28,18 @@ export interface ScoreData {
   flightId: string;
   flightName: string;
   teeOffTime: number;
+  startHole?: number;
+  gameMode?: string;
+  courseType?: string;
+  scoringSystem?: string;
   players: PlayerScore[];
+  holes: HoleInfo[];
+}
+
+export interface HoleInfo {
+  holeNumber: number;
+  par: number;
+  index: number;
 }
 
 export interface PlayerScore {
@@ -31,12 +48,12 @@ export interface PlayerScore {
   scores: HoleScore[];
   totalScore: number;
   handicap?: number;
+  bagTagNumber?: string;
 }
 
 export interface HoleScore {
   holeNumber: number;
   strokes: number;
-  par: number;
   putts?: number;
 }
 

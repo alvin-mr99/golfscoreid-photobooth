@@ -34,7 +34,7 @@ class PrintService {
       document.body.removeChild(printContainer);
     } catch (error) {
       console.error('Print error:', error);
-      throw new Error('Gagal mencetak. Silakan coba lagi.');
+      throw new Error('Failed to print. Please try again.');
     }
   }
 
@@ -74,7 +74,7 @@ class PrintService {
           }
           
           body {
-            font-family: Arial, sans-serif;
+            font-family: 'Outfit', Arial, sans-serif;
             color: #000;
             background: #fff;
           }
@@ -191,7 +191,7 @@ class PrintService {
         <table class="score-table">
           <thead>
             <tr>
-              <th>Pemain</th>
+              <th>Player</th>
               ${allHoles.map(hole => `<th>${hole}</th>`).join('')}
               <th>Total</th>
             </tr>
@@ -216,7 +216,7 @@ class PrintService {
         <!-- Photos Section -->
         ${photos.length > 0 ? `
           <div class="photos-section">
-            <h2>Foto Kenangan</h2>
+            <h2>Memorable Photos</h2>
             <div class="photos-grid">
               ${photos.map(photo => `
                 <div class="photo-item">
@@ -229,7 +229,7 @@ class PrintService {
         
         <!-- Footer -->
         <div class="print-footer">
-          <p>Dicetak pada ${formatDate(Date.now())} • GolfScoreID Photo Booth</p>
+          <p>Printed on ${formatDate(Date.now())} • GolfScoreID Photo Booth</p>
         </div>
       </div>
     `;

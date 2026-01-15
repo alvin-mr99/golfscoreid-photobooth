@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import type { Flight } from '../types';
 
 interface FlightSelectorProps {
@@ -10,6 +10,21 @@ interface FlightSelectorProps {
 export function FlightSelector({ flights, onSelect, isLoading }: FlightSelectorProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Filter flights based on search query
   const filteredFlights = useMemo(() => {
@@ -59,7 +74,7 @@ export function FlightSelector({ flights, onSelect, isLoading }: FlightSelectorP
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div ref={containerRef} className="w-full max-w-2xl mx-auto">
       {/* Search Input */}
       <div className="relative">
         <input
@@ -70,13 +85,14 @@ export function FlightSelector({ flights, onSelect, isLoading }: FlightSelectorP
             setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
-          placeholder="Cari flight atau nama pemain..."
+          placeholder="Search flight or player name..."
           disabled={isLoading}
-          className="w-full px-6 py-6 text-2xl border-2 border-gray-300 rounded-2xl 
-                   focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-100
+          className="w-full px-6 py-6 text-2xl border-2 border-white/30 rounded-2xl 
+                   bg-white/90 backdrop-blur-sm
+                   focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-400/30
                    disabled:bg-gray-100 disabled:cursor-not-allowed
                    transition-all duration-200
-                   min-h-[60px]"
+                   min-h-[60px] text-gray-800 placeholder-gray-500"
         />
         
         {/* Search Icon */}
@@ -92,23 +108,23 @@ export function FlightSelector({ flights, onSelect, isLoading }: FlightSelectorP
       {isLoading && (
         <div className="mt-4 text-center text-gray-600">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-green-500"></div>
-          <p className="mt-2">Memuat data flights...</p>
+          <p className="mt-2">Loading flights data...</p>
         </div>
       )}
 
       {/* Dropdown Results */}
       {isOpen && !isLoading && filteredFlights.length > 0 && (
-        <div className="mt-4 bg-white border-2 border-gray-200 rounded-2xl shadow-xl 
+        <div className="mt-4 bg-white/95 backdrop-blur-sm border-2 border-white/40 rounded-2xl shadow-2xl 
                       max-h-[60vh] overflow-y-auto">
           {filteredFlights.map((flight) => (
             <button
               key={flight._id}
               onClick={() => handleFlightSelect(flight._id)}
-              className="w-full px-6 py-6 text-left hover:bg-green-50 
-                       border-b border-gray-100 last:border-b-0
+              className="w-full px-6 py-6 text-left hover:bg-green-50/80 
+                       border-b border-gray-200 last:border-b-0
                        transition-colors duration-150
-                       focus:outline-none focus:bg-green-100
-                       min-h-[80px] active:bg-green-100"
+                       focus:outline-none focus:bg-green-100/80
+                       min-h-[80px] active:bg-green-100/80"
             >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
@@ -120,9 +136,9 @@ export function FlightSelector({ flights, onSelect, isLoading }: FlightSelectorP
                   </p>
                   {flight.players && flight.players.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                      {flight.players.map((player) => (
+                      {flight.players.map((player, playerIndex) => (
                         <span
-                          key={player._id}
+                          key={`${flight._id}-player-${player._id || playerIndex}`}
                           className="inline-block px-4 py-2 bg-green-100 text-green-800 
                                    text-base rounded-full"
                         >
@@ -154,18 +170,18 @@ export function FlightSelector({ flights, onSelect, isLoading }: FlightSelectorP
                   d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <p className="text-gray-600 text-lg">
-            Tidak ada flight yang ditemukan untuk "{searchQuery}"
+            No flights found for "{searchQuery}"
           </p>
           <p className="text-gray-500 text-sm mt-2">
-            Coba kata kunci lain atau nama pemain
+            Try another keyword or player name
           </p>
         </div>
       )}
 
       {/* Initial State - Show all flights */}
       {!isOpen && !isLoading && flights.length > 0 && !searchQuery && (
-        <div className="mt-4 text-center text-gray-500 text-sm">
-          {flights.length} flight tersedia. Ketik untuk mencari...
+        <div className="mt-4 text-center text-white text-sm">
+          {flights.length} flights available. Type to search...
         </div>
       )}
     </div>

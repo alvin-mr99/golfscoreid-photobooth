@@ -39,7 +39,7 @@ export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
         }
       } catch (err) {
         if (mounted) {
-          setError(err instanceof Error ? err.message : 'Gagal mengakses kamera');
+          setError(err instanceof Error ? err.message : 'Failed to access camera');
           console.error('Camera error:', err);
         }
       }
@@ -83,7 +83,7 @@ export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
         setIsCapturing(false);
       }, 200);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Gagal mengambil foto');
+      setError(err instanceof Error ? err.message : 'Failed to capture photo');
       setIsCapturing(false);
     }
   };
@@ -101,7 +101,7 @@ export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
         <h3 className="text-xl font-semibold text-red-800 mb-2">
-          Kamera Tidak Tersedia
+          Camera Not Available
         </h3>
         <p className="text-red-700 mb-6">{error}</p>
         <button
@@ -110,7 +110,7 @@ export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
                    hover:bg-red-700 transition-colors duration-200
                    focus:outline-none focus:ring-4 focus:ring-red-200"
         >
-          Coba Lagi
+          Try Again
         </button>
       </div>
     );
@@ -133,7 +133,7 @@ export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75">
             <div className="text-center text-white">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mb-4"></div>
-              <p className="text-lg">Memuat kamera...</p>
+              <p className="text-lg">Loading camera...</p>
             </div>
           </div>
         )}
@@ -172,7 +172,7 @@ export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                   d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          {isCapturing ? 'Mengambil Foto...' : 'Ambil Foto'}
+          {isCapturing ? 'Capturing Photo...' : 'Take Photo'}
         </button>
       </div>
     </div>

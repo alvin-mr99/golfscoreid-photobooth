@@ -42,10 +42,10 @@ export function PhotoGallery({
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
         <p className="text-gray-600 text-lg">
-          Belum ada foto yang diambil
+          No photos taken yet
         </p>
         <p className="text-gray-500 text-sm mt-2">
-          Gunakan kamera di atas untuk mengambil foto
+          Use the camera above to take photos
         </p>
       </div>
     );
@@ -118,7 +118,7 @@ export function PhotoGallery({
       {/* Photo Count */}
       <div className="mt-4 text-center text-gray-600">
         <p className="text-sm">
-          {photos.length} foto diambil • {selectedPhotos.length} foto dipilih untuk dicetak
+          {photos.length} photos taken • {selectedPhotos.length} photos selected for printing
         </p>
       </div>
 
@@ -168,7 +168,7 @@ export function PhotoGallery({
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    Terpilih
+                    Selected
                   </>
                 ) : (
                   <>
@@ -176,7 +176,7 @@ export function PhotoGallery({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                             d="M5 13l4 4L19 7" />
                     </svg>
-                    Pilih Foto
+                    Select Photo
                   </>
                 )}
               </button>
@@ -195,7 +195,7 @@ export function PhotoGallery({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-                Hapus
+                Delete
               </button>
             </div>
           </div>
