@@ -9,7 +9,7 @@ import {
 import { convexService } from '../services/ConvexService';
 import type { ScoreData, CapturedPhoto } from '../types';
 
-const POST_PRINT_TIMEOUT = 5000; // 5 seconds
+const POST_PRINT_TIMEOUT = 3000; // 5 seconds
 
 export function ScorePhotoPage() {
   const { flightId } = useParams<{ flightId: string }>();
@@ -18,6 +18,7 @@ export function ScorePhotoPage() {
   const [scoreData, setScoreData] = useState<ScoreData | null>(null);
   const [capturedPhotos, setCapturedPhotos] = useState<CapturedPhoto[]>([]);
   const [selectedPhotoIds, setSelectedPhotoIds] = useState<string[]>([]);
+  const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showPrintSuccess, setShowPrintSuccess] = useState(false);
@@ -86,11 +87,17 @@ export function ScorePhotoPage() {
     // Clear all session data
     setCapturedPhotos([]);
     setSelectedPhotoIds([]);
+    setSelectedPlayerIds([]);
     setScoreData(null);
     setShowPrintSuccess(false);
     
     // Navigate back to welcome page
     navigate('/');
+  };
+
+  // Handle selected players change
+  const handleSelectedPlayersChange = (playerIds: string[]) => {
+    setSelectedPlayerIds(playerIds);
   };
 
   // Get selected photos for printing
@@ -261,7 +268,10 @@ export function ScorePhotoPage() {
           <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 animate-fade-in-up">
             {/* Score Display */}
             <div className="bg-white/15 backdrop-blur-2xl rounded-3xl shadow-2xl p-4 sm:p-6 border-2 border-white/30 hover:border-white/50 transition-all duration-500">
-              <ScoreDisplay scoreData={scoreData} />
+              <ScoreDisplay 
+                scoreData={scoreData} 
+                onSelectedPlayersChange={handleSelectedPlayersChange}
+              />
             </div>
 
             {/* Photo Booth */}
@@ -279,7 +289,10 @@ export function ScorePhotoPage() {
                   Take Photo
                 </h2>
               </div>
-              <PhotoBooth onPhotoCapture={handlePhotoCapture} />
+              <PhotoBooth 
+                onPhotoCapture={handlePhotoCapture}
+                currentPhotoCount={capturedPhotos.length}
+              />
             </div>
 
             {/* Photo Gallery */}
@@ -310,6 +323,7 @@ export function ScorePhotoPage() {
               <PrintButton
                 scoreData={scoreData}
                 selectedPhotos={selectedPhotos}
+                selectedPlayerIds={selectedPlayerIds}
                 onPrintComplete={handlePrintComplete}
               />
             </div>

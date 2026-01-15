@@ -187,6 +187,30 @@ export function WelcomePage() {
             </p>
           </div>
         </div>
+
+        {/* Created By Footer */}
+        <div className="mt-12 text-center animate-fade-in-delayed">
+          <div className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-white/5 via-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl hover:border-white/40 transition-all duration-500 hover:scale-105">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+              <div className="w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse animation-delay-150 shadow-lg shadow-emerald-300/50"></div>
+              <div className="w-1 h-1 bg-green-200 rounded-full animate-pulse animation-delay-300 shadow-lg shadow-green-200/50"></div>
+            </div>
+            <div className="text-center">
+              <p className="text-white/60 text-xs font-medium tracking-wider uppercase mb-1" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.5)' }}>
+                Created by
+              </p>
+              <p className="text-white text-lg font-bold tracking-wide bg-gradient-to-r from-green-300 via-emerald-200 to-green-300 bg-clip-text text-transparent animate-gradient-slow" style={{ textShadow: '0 2px 10px rgba(74, 222, 128, 0.3)' }}>
+                PT DECOM FENO MAHAKA
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-1 bg-green-200 rounded-full animate-pulse animation-delay-300 shadow-lg shadow-green-200/50"></div>
+              <div className="w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse animation-delay-150 shadow-lg shadow-emerald-300/50"></div>
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Custom Animations */}
@@ -240,6 +264,21 @@ export function WelcomePage() {
           animation: gradient 4s ease infinite;
         }
         .animate-shake { animation: shake 0.6s ease-in-out; }
+        @keyframes fade-in-delayed {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes gradient-slow {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .animate-fade-in-delayed { animation: fade-in-delayed 1.5s ease-out 0.8s both; }
+        .animate-gradient-slow { 
+          background-size: 200% 200%;
+          animation: gradient-slow 5s ease infinite;
+        }
+        .animation-delay-150 { animation-delay: 0.15s; }
+        .animation-delay-300 { animation-delay: 0.3s; }
       `}</style>
     </div>
   );

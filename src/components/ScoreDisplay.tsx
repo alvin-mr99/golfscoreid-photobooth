@@ -1,12 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { ScoreData } from '../types';
 
 interface ScoreDisplayProps {
   scoreData: ScoreData;
+  onSelectedPlayersChange?: (selectedPlayerIds: string[]) => void;
 }
 
-export function ScoreDisplay({ scoreData }: ScoreDisplayProps) {
+export function ScoreDisplay({ scoreData, onSelectedPlayersChange }: ScoreDisplayProps) {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [selectedPlayers, setSelectedPlayers] = useState<string[]>(
+    scoreData.players.map(p => p.playerId)
+  );
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Update current time every second
   useEffect(() => {
@@ -15,6 +21,30 @@ export function ScoreDisplay({ scoreData }: ScoreDisplayProps) {
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  // Update selected players when scoreData changes
+  useEffect(() => {
+    setSelectedPlayers(scoreData.players.map(p => p.playerId));
+  }, [scoreData.players]);
+
+  // Notify parent when selected players change
+  useEffect(() => {
+    if (onSelectedPlayersChange) {
+      onSelectedPlayersChange(selectedPlayers);
+    }
+  }, [selectedPlayers, onSelectedPlayersChange]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const formatDate = (timestamp: number) => {
@@ -44,6 +74,46 @@ export function ScoreDisplay({ scoreData }: ScoreDisplayProps) {
       hour12: true,
     });
   };
+
+  // Toggle player selection
+  const togglePlayer = (playerId: string) => {
+    setSelectedPlayers(prev => {
+      if (prev.includes(playerId)) {
+        // Don't allow deselecting if it's the last player
+        if (prev.length === 1) return prev;
+        return prev.filter(id => id !== playerId);
+      } else {
+        return [...prev, playerId];
+      }
+    });
+  };
+
+  // Toggle all players
+  const toggleAllPlayers = () => {
+    if (selectedPlayers.length === scoreData.players.length) {
+      // Keep at least one player selected
+      setSelectedPlayers([scoreData.players[0].playerId]);
+    } else {
+      setSelectedPlayers(scoreData.players.map(p => p.playerId));
+    }
+  };
+
+  // Get selected player names for display
+  const getSelectedPlayerNames = () => {
+    if (selectedPlayers.length === scoreData.players.length) {
+      return 'All Players';
+    }
+    if (selectedPlayers.length === 1) {
+      const player = scoreData.players.find(p => p.playerId === selectedPlayers[0]);
+      return player?.playerName || 'Select Players';
+    }
+    return `${selectedPlayers.length} Players Selected`;
+  };
+
+  // Filter players based on selection
+  const displayedPlayers = scoreData.players.filter(p => 
+    selectedPlayers.includes(p.playerId)
+  );
 
   // Get all 18 holes from scoreData
   const holes = scoreData.holes || [];
@@ -100,9 +170,123 @@ export function ScoreDisplay({ scoreData }: ScoreDisplayProps) {
             {scoreData.flightName}
           </h2>
         </div>
+
+        {/* Date and Player Selection Row */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-4 mb-4">
+          {/* Date Display */}
+          <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm border border-gray-200">
+            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span className="font-semibold text-sm text-gray-700">{formatDate(scoreData.teeOffTime)}</span>
+          </div>
+
+          {/* Player Selection Dropdown - Hidden when printing */}
+          <div className="flex-1 print:hidden relative" ref={dropdownRef}>
+            <div className="flex items-center gap-2">
+              {/* Custom Dropdown */}
+              <div className="flex-1 relative">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-sm border border-blue-200 hover:border-blue-300 transition-colors"
+                >
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-700 truncate">
+                      {getSelectedPlayerNames()}
+                    </span>
+                  </div>
+                  <svg 
+                    className={`w-5 h-5 text-blue-600 flex-shrink-0 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+                    {/* Select All Button */}
+                    <div className="p-2 border-b border-gray-200 bg-gray-50">
+                      <button
+                        onClick={toggleAllPlayers}
+                        className="w-full px-3 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                      >
+                        {selectedPlayers.length === scoreData.players.length ? 'Deselect All' : 'Select All'}
+                      </button>
+                    </div>
+
+                    {/* Player List */}
+                    <div className="max-h-64 overflow-y-auto">
+                      {scoreData.players.map((player) => {
+                        const isSelected = selectedPlayers.includes(player.playerId);
+                        return (
+                          <button
+                            key={player.playerId}
+                            onClick={() => togglePlayer(player.playerId)}
+                            className={`
+                              w-full flex items-center gap-3 px-3 py-2.5 transition-colors
+                              ${isSelected 
+                                ? 'bg-blue-50 hover:bg-blue-100' 
+                                : 'hover:bg-gray-50'
+                              }
+                            `}
+                          >
+                            {/* Checkbox */}
+                            <div className={`
+                              w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0
+                              ${isSelected 
+                                ? 'bg-blue-600 border-blue-600' 
+                                : 'bg-white border-gray-300'
+                              }
+                            `}>
+                              {isSelected && (
+                                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              )}
+                            </div>
+                            
+                            {/* Player Info */}
+                            <div className="text-left min-w-0 flex-1">
+                              <div className={`font-semibold text-sm truncate ${isSelected ? 'text-blue-900' : 'text-gray-800'}`}>
+                                {player.playerName}
+                              </div>
+                              {(player.bagTagNumber || player.handicap !== undefined) && (
+                                <div className="text-xs text-gray-600">
+                                  {player.bagTagNumber && `Bag: ${player.bagTagNumber}`}
+                                  {player.bagTagNumber && player.handicap !== undefined && ' • '}
+                                  {player.handicap !== undefined && `HCP: ${player.handicap}`}
+                                </div>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Footer Info */}
+                    <div className="p-2 border-t border-gray-200 bg-gray-50">
+                      <div className="text-xs text-gray-600 text-center">
+                        {selectedPlayers.length} of {scoreData.players.length} players selected
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
         
         {/* Flight Information Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {/* Tee Off Time */}
           <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-sm border border-blue-200">
             <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,39 +335,46 @@ export function ScoreDisplay({ scoreData }: ScoreDisplayProps) {
             </div>
           </div>
         </div>
-
-        {/* Date Display */}
-        <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm border border-gray-200">
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <span className="font-semibold text-sm text-gray-700">{formatDate(scoreData.teeOffTime)}</span>
-        </div>
       </div>
 
-      {/* Legend */}
-      <div className="mb-3 flex flex-wrap items-center gap-2 bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
-        <span className="font-semibold text-gray-700 text-xs">Scoring:</span>
-        <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 bg-yellow-300 rounded border border-gray-300"></div>
-          <span className="text-[10px] font-medium text-gray-700">Eagle</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 bg-green-400 rounded border border-gray-300"></div>
-          <span className="text-[10px] font-medium text-gray-700">Birdie</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 bg-white rounded border border-gray-300"></div>
-          <span className="text-[10px] font-medium text-gray-700">Par</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 bg-orange-300 rounded border border-gray-300"></div>
-          <span className="text-[10px] font-medium text-gray-700">Bogey</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 bg-red-400 rounded border border-gray-300"></div>
-          <span className="text-[10px] font-medium text-gray-700">Double+</span>
+      {/* Legend with Course Info */}
+      <div className="mb-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
+        {/* Course Name - Left Side */}
+        {/* {scoreData.courseName && ( */}
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+            <svg className="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                    d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+            </svg>
+            <div className="min-w-0">
+              {/* <div className="text-[9px] text-green-600 font-semibold uppercase">Course</div> */}
+              <div className="font-bold text-xs text-gray-800 truncate">Padang Golf Pangkalan Jati</div>
+            </div>
+          </div>
+        {/* )} */}
+        
+        {/* Legend - Right Side */}
+        <div className="flex flex-wrap items-center gap-2 ml-auto">
+          <div className="flex items-center gap-1.5">
+            <div className="w-6 h-6 bg-yellow-300 rounded border border-gray-300"></div>
+            <span className="text-[10px] font-medium text-gray-700">Eagle</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-6 h-6 bg-green-400 rounded border border-gray-300"></div>
+            <span className="text-[10px] font-medium text-gray-700">Birdie</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-6 h-6 bg-white rounded border border-gray-300"></div>
+            <span className="text-[10px] font-medium text-gray-700">Par</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-6 h-6 bg-orange-300 rounded border border-gray-300"></div>
+            <span className="text-[10px] font-medium text-gray-700">Bogey</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-6 h-6 bg-red-400 rounded border border-gray-300"></div>
+            <span className="text-[10px] font-medium text-gray-700">Double+</span>
+          </div>
         </div>
       </div>
 
@@ -289,7 +480,7 @@ export function ScoreDisplay({ scoreData }: ScoreDisplayProps) {
             </tr>
           </thead>
           <tbody>
-            {scoreData.players.map((player, idx) => {
+            {displayedPlayers.map((player, idx) => {
               // Calculate OUT score (holes 1-9)
               const outScore = player.scores
                 .filter(s => s.holeNumber >= 1 && s.holeNumber <= 9)

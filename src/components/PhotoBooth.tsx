@@ -3,16 +3,20 @@ import { v4 as uuidv4 } from 'uuid';
 import { cameraService } from '../services/CameraService';
 import type { CapturedPhoto } from '../types';
 
+const MAX_PHOTOS = 3;
+
 interface PhotoBoothProps {
   onPhotoCapture: (photo: CapturedPhoto) => void;
+  currentPhotoCount: number;
 }
 
-export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
+export function PhotoBooth({ onPhotoCapture, currentPhotoCount }: PhotoBoothProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [showMaxPhotosModal, setShowMaxPhotosModal] = useState(false);
 
   // Request camera access on mount
   useEffect(() => {
@@ -59,6 +63,12 @@ export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
   // Handle photo capture
   const handleCapture = () => {
     if (!videoRef.current || !isCameraReady) {
+      return;
+    }
+
+    // Check if max photos reached
+    if (currentPhotoCount >= MAX_PHOTOS) {
+      setShowMaxPhotosModal(true);
       return;
     }
 
@@ -116,8 +126,54 @@ export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
     );
   }
 
+  const isMaxPhotosReached = currentPhotoCount >= MAX_PHOTOS;
+
   return (
     <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-xl">
+      {/* Max Photos Modal */}
+      {showMaxPhotosModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 animate-fade-in"
+             onClick={() => setShowMaxPhotosModal(false)}>
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 animate-scale-in"
+               onClick={(e) => e.stopPropagation()}>
+            <div className="text-center">
+              {/* Icon */}
+              <div className="mb-6 animate-bounce-slow">
+                <div className="inline-block p-4 bg-gradient-to-br from-orange-100 to-red-100 rounded-full">
+                  <svg className="w-16 h-16 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} 
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                Maximum Photos Reached
+              </h3>
+
+              {/* Message */}
+              <p className="text-gray-600 text-lg mb-2">
+                You can only take up to <span className="font-bold text-orange-600">{MAX_PHOTOS} photos</span>
+              </p>
+              <p className="text-gray-500 text-sm mb-8">
+                Please delete an existing photo if you want to take a new one
+              </p>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setShowMaxPhotosModal(false)}
+                className="w-full px-6 py-4 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl font-bold text-lg
+                         hover:from-orange-700 hover:to-red-700 hover:scale-105 transition-all duration-300
+                         focus:outline-none focus:ring-4 focus:ring-orange-300 shadow-xl"
+              >
+                Got It!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Video Preview */}
       <div className="relative aspect-video bg-black">
         <video
@@ -159,12 +215,14 @@ export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
         <button
           onClick={handleCapture}
           disabled={!isCameraReady || isCapturing}
-          className="w-full py-5 bg-green-600 text-white rounded-xl font-bold text-xl
-                   hover:bg-green-700 active:bg-green-800
-                   disabled:bg-gray-600 disabled:cursor-not-allowed
+          className={`w-full py-5 text-white rounded-xl font-bold text-xl
                    transition-colors duration-200
-                   focus:outline-none focus:ring-4 focus:ring-green-300
-                   flex items-center justify-center gap-3"
+                   focus:outline-none focus:ring-4
+                   flex items-center justify-center gap-3
+                   ${isMaxPhotosReached 
+                     ? 'bg-orange-600 hover:bg-orange-700 focus:ring-orange-300' 
+                     : 'bg-green-600 hover:bg-green-700 active:bg-green-800 focus:ring-green-300'}
+                   disabled:bg-gray-600 disabled:cursor-not-allowed`}
         >
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
@@ -172,9 +230,33 @@ export function PhotoBooth({ onPhotoCapture }: PhotoBoothProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                   d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          {isCapturing ? 'Capturing Photo...' : 'Take Photo'}
+          {isCapturing ? 'Capturing Photo...' : isMaxPhotosReached ? `Maximum ${MAX_PHOTOS} Photos` : 'Take Photo'}
         </button>
+        {isMaxPhotosReached && (
+          <p className="mt-2 text-center text-orange-400 text-sm">
+            Delete a photo to take a new one
+          </p>
+        )}
       </div>
+
+      {/* Animation Styles */}
+      <style>{`
+        @keyframes fade-in {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+        @keyframes scale-in {
+          0% { opacity: 0; transform: scale(0.9); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-10px) scale(1.05); }
+        }
+        .animate-fade-in { animation: fade-in 0.3s ease-out; }
+        .animate-scale-in { animation: scale-in 0.3s ease-out; }
+        .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+      `}</style>
     </div>
   );
 }

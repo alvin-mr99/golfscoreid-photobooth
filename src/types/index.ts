@@ -32,6 +32,7 @@ export interface ScoreData {
   gameMode?: string;
   courseType?: string;
   scoringSystem?: string;
+  courseName?: string;
   players: PlayerScore[];
   holes: HoleInfo[];
 }

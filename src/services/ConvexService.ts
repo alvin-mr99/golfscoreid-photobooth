@@ -140,6 +140,18 @@ class ConvexService {
         throw new Error('No players found for this flight.');
       }
 
+      // Fetch course details if course_id exists
+      let courseName: string | undefined;
+      if (flight.course_id) {
+        try {
+          const course = await this.makeRequest('golf_courses:get', { id: flight.course_id });
+          courseName = course?.name;
+        } catch (err) {
+          console.error('Error fetching course:', err);
+          courseName = undefined;
+        }
+      }
+
       // Create default 18 holes with standard par
       // Standard golf course: Par 72 (4 par-3s, 10 par-4s, 4 par-5s)
       const standardPars = [4, 5, 3, 4, 4, 4, 3, 5, 4, 4, 4, 3, 5, 4, 4, 3, 4, 5];
@@ -188,6 +200,7 @@ class ConvexService {
         gameMode: flight.game_mode,
         courseType: flight.course_type,
         scoringSystem: flight.scoring_system,
+        courseName: courseName,
         players: playerScores,
         holes: holes,
       };

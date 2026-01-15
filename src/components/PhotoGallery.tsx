@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { CapturedPhoto } from '../types';
 
+const MAX_PHOTOS = 3;
+
 interface PhotoGalleryProps {
   photos: CapturedPhoto[];
   selectedPhotos: string[];
@@ -53,9 +55,9 @@ export function PhotoGallery({
 
   return (
     <div>
-      {/* Gallery Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {photos.map((photo) => (
+      {/* Gallery Grid - Limited to 3 photos */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {photos.slice(0, MAX_PHOTOS).map((photo) => (
           <div
             key={photo.id}
             className={`relative group rounded-xl overflow-hidden border-4 transition-all duration-200
@@ -116,9 +118,9 @@ export function PhotoGallery({
       </div>
 
       {/* Photo Count */}
-      <div className="mt-4 text-center text-gray-600">
+      <div className="mt-4 text-center text-white">
         <p className="text-sm">
-          {photos.length} photos taken • {selectedPhotos.length} photos selected for printing
+          {photos.length} / {MAX_PHOTOS} photos taken • {selectedPhotos.length} photos selected for printing
         </p>
       </div>
 
