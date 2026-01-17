@@ -50,9 +50,18 @@ export function ScorePhotoPage() {
 
   // Handle photo capture
   const handlePhotoCapture = (photo: CapturedPhoto) => {
-    setCapturedPhotos(prev => [...prev, photo]);
-    // Auto-select newly captured photo
-    setSelectedPhotoIds(prev => [...prev, photo.id]);
+    // Only save photo if we haven't reached the maximum of 3 photos
+    setCapturedPhotos(prev => {
+      if (prev.length >= 3) {
+        console.log('Maximum 3 photos reached, not saving new photo');
+        return prev; // Don't add new photo
+      }
+      
+      // Auto-select newly captured photo
+      setSelectedPhotoIds(prevIds => [...prevIds, photo.id]);
+      
+      return [...prev, photo];
+    });
   };
 
   // Handle photo selection toggle

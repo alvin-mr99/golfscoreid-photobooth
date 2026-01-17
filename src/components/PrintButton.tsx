@@ -10,6 +10,8 @@ interface PrintButtonProps {
   disabled?: boolean;
 }
 
+const MAX_PHOTOS_FOR_PRINT = 3;
+
 export function PrintButton({ 
   scoreData, 
   selectedPhotos,
@@ -29,8 +31,11 @@ export function PrintButton({
       setError(null);
       setShowPreview(true);
 
-      // Generate preview HTML with selected players
-      const html = await printService.generatePreviewHTML(scoreData, selectedPhotos, selectedPlayerIds);
+      // Limit to maximum 3 photos
+      const photosToPreview = selectedPhotos.slice(0, MAX_PHOTOS_FOR_PRINT);
+
+      // Generate preview HTML with selected players and limited photos
+      const html = await printService.generatePreviewHTML(scoreData, photosToPreview, selectedPlayerIds);
       setPreviewHTML(html);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate preview');
@@ -46,8 +51,11 @@ export function PrintButton({
       setIsPrinting(true);
       setError(null);
 
-      // Print score and photos with selected players
-      await printService.printScoreAndPhotos(scoreData, selectedPhotos, selectedPlayerIds);
+      // Limit to maximum 3 photos
+      const photosToPrint = selectedPhotos.slice(0, MAX_PHOTOS_FOR_PRINT);
+
+      // Print score and photos with selected players and limited photos
+      await printService.printScoreAndPhotos(scoreData, photosToPrint, selectedPlayerIds);
 
       // Close preview and notify parent
       setShowPreview(false);
@@ -92,7 +100,7 @@ export function PrintButton({
         Print Scoring & Photos
         {selectedPhotos.length > 0 && (
           <span className="px-3 py-1 bg-blue-500 rounded-full text-sm">
-            {selectedPhotos.length} photos
+            {Math.min(selectedPhotos.length, MAX_PHOTOS_FOR_PRINT)} photos
           </span>
         )}
       </button>
@@ -102,7 +110,7 @@ export function PrintButton({
         <p className="mt-3 text-center text-sm text-white">
           {selectedPhotos.length === 0 
             ? 'Select photos to print with scoring' 
-            : `${selectedPhotos.length} photos will be printed`}
+            : `${Math.min(selectedPhotos.length, MAX_PHOTOS_FOR_PRINT)} photos will be printed${selectedPhotos.length > MAX_PHOTOS_FOR_PRINT ? ` (max ${MAX_PHOTOS_FOR_PRINT})` : ''}`}
         </p>
       )}
 

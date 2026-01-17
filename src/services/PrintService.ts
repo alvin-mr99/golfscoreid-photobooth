@@ -4,6 +4,7 @@ import type { ScoreData, CapturedPhoto } from '../types';
  * PrintService handles printing of score data and photos
  */
 class PrintService {
+  private readonly MAX_PHOTOS = 3;
   /**
    * Generate preview HTML (without print styles)
    * @param scoreData The scoring data to preview
@@ -18,7 +19,10 @@ class PrintService {
     // Simulate loading time for better UX
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    return this.generatePrintHTML(scoreData, photos, false, selectedPlayerIds);
+    // Limit to maximum 3 photos
+    const limitedPhotos = photos.slice(0, this.MAX_PHOTOS);
+    
+    return this.generatePrintHTML(scoreData, limitedPhotos, false, selectedPlayerIds);
   }
 
   /**
@@ -33,14 +37,17 @@ class PrintService {
     selectedPlayerIds?: string[]
   ): Promise<void> {
     try {
+      // Limit to maximum 3 photos
+      const limitedPhotos = photos.slice(0, this.MAX_PHOTOS);
+
       // Create a hidden print container
       const printContainer = document.createElement('div');
       printContainer.id = 'print-container';
       printContainer.style.display = 'none';
       document.body.appendChild(printContainer);
 
-      // Generate print HTML with selected players
-      const printHTML = this.generatePrintHTML(scoreData, photos, true, selectedPlayerIds);
+      // Generate print HTML with selected players and limited photos
+      const printHTML = this.generatePrintHTML(scoreData, limitedPhotos, true, selectedPlayerIds);
       printContainer.innerHTML = printHTML;
 
       // Wait for images to load

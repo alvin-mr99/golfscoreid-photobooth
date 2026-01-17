@@ -146,14 +146,17 @@ export function PhotoBooth({ onPhotoCapture, currentPhotoCount }: PhotoBoothProp
       // Detect 5 fingers gesture
       if (fingerCount === 5) {
         const now = Date.now();
-        // Prevent multiple triggers (cooldown of 3 seconds)
-        if (now - lastGestureTimeRef.current > 3000 && !isCapturing && countdown === null) {
+        // Prevent multiple triggers (cooldown of 3 seconds) and check max photos
+        if (now - lastGestureTimeRef.current > 3000 && !isCapturing && countdown === null && currentPhotoCount < MAX_PHOTOS) {
           console.log('5 fingers detected! Starting countdown...');
           setGestureDetected(true);
           lastGestureTimeRef.current = now;
           
           // Start countdown
           startCountdown();
+        } else if (currentPhotoCount >= MAX_PHOTOS) {
+          // Show max photos modal if limit reached
+          setShowMaxPhotosModal(true);
         }
       } else {
         setGestureDetected(false);
