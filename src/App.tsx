@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context';
 import { ErrorBoundary, FullscreenButton } from './components';
-import { WelcomePage, ScorePhotoPage } from './pages';
+import { WelcomePage, ScorePage } from './pages';
 import { setupKioskMode, setupGlobalErrorHandler } from './utils';
 import './App.css';
 
@@ -11,7 +11,7 @@ function AppRoutes() {
     <>
       <Routes>
         <Route path="/" element={<WelcomePage />} />
-        <Route path="/score-photo/:flightId" element={<ScorePhotoPage />} />
+        <Route path="/score-photo/:flightId" element={<ScorePage />} />
       </Routes>
       <FullscreenButton />
     </>

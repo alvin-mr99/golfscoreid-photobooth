@@ -114,11 +114,11 @@ export function WelcomePage() {
             </span>
             <br />
             <span className="text-6xl md:text-7xl text-white drop-shadow-2xl" style={{ textShadow: '0 4px 20px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 255, 255, 0.2)' }}>
-              Photo Booth
+              Scorecard Printing
             </span>
           </h1>
           <p className="text-2xl md:text-3xl text-white font-medium max-w-3xl mx-auto drop-shadow-2xl" style={{ textShadow: '0 2px 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)' }}>
-            View your scoring results and take photos to print
+            View your scoring results to print
           </p>
         </div>
 

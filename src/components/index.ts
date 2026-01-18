@@ -1,7 +1,9 @@
 export { FlightSelector } from './FlightSelector';
 export { ScoreDisplay } from './ScoreDisplay';
+export { ScoreDisplayNew } from './ScoreDisplayNew';
 export { PhotoBooth } from './PhotoBooth';
 export { PhotoGallery } from './PhotoGallery';
 export { PrintButton } from './PrintButton';
+export { PrintScoreButton } from './PrintScoreButton';
 export { ErrorBoundary } from './ErrorBoundary';
 export { FullscreenButton } from './FullscreenButton';
