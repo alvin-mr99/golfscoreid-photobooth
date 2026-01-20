@@ -110,6 +110,12 @@ export function ScoreDisplayNew({
     return player?.playerName || 'Select Player to Print';
   };
 
+  // Function to get first 3 words of player name
+  const getFirst3Words = (name: string) => {
+    const words = name.trim().split(/\s+/);
+    return words.slice(0, 3).join(' ');
+  };
+
   // All players are displayed in the table
   const displayedPlayers = scoreData.players;
 
@@ -129,8 +135,8 @@ export function ScoreDisplayNew({
   // Total par
   const totalPar = outPar + inPar;
 
-  // Function to render score with custom symbol
-  const renderScoreWithSymbol = (strokes: number, par: number) => {
+  // Function to render score with color background
+  const renderScoreWithColor = (strokes: number, par: number) => {
     const diff = strokes - par;
     
     // Determine display value based on mode
@@ -138,63 +144,35 @@ export function ScoreDisplayNew({
       ? strokes 
       : (diff === 0 ? '0' : (diff > 0 ? `+${diff}` : diff));
     
-    // Eagle or better - Double Circle
+    // Determine background color based on score
+    let bgColor = '';
+    let textColor = 'text-gray-900';
+    
     if (diff <= -2) {
-      return (
-        <div className="relative inline-flex items-center justify-center w-7 h-7">
-          <svg width="42" height="42" viewBox="0 0 28 28" className="absolute">
-            <circle cx="14" cy="14" r="12" fill="none" stroke="#1f2937" strokeWidth="0.5"/>
-            <circle cx="14" cy="14" r="8" fill="none" stroke="#1f2937" strokeWidth="0.5"/>
-          </svg>
-          <span className="relative z-10 text-xs font-bold text-gray-900">{displayValue}</span>
-        </div>
-      );
+      // Eagle or better - Yellow
+      bgColor = 'bg-yellow-300';
+      textColor = 'text-gray-900';
+    } else if (diff === -1) {
+      // Birdie - Green
+      bgColor = 'bg-green-400';
+      textColor = 'text-white';
+    } else if (diff === 0) {
+      // Par - White
+      bgColor = 'bg-white';
+      textColor = 'text-gray-900';
+    } else if (diff === 1) {
+      // Bogey - Orange
+      bgColor = 'bg-orange-300';
+      textColor = 'text-gray-900';
+    } else {
+      // Double Bogey or worse - Red
+      bgColor = 'bg-red-400';
+      textColor = 'text-white';
     }
     
-    // Birdie - Triangle
-    if (diff === -1) {
-      return (
-        <div className="relative inline-flex items-center justify-center w-7 h-7">
-          <svg width="42" height="42" viewBox="0 0 28 28" className="absolute">
-            <path d="M14 3 L25 23 L3 23 Z" fill="none" stroke="#000000ff" strokeWidth="0.5"/>
-          </svg>
-          <span className="relative z-10 text-xs font-bold text-gray-900" style={{ marginTop: '3px' }}>{displayValue}</span>
-        </div>
-      );
-    }
-    
-    // Par - Circle
-    if (diff === 0) {
-      return (
-        <div className="relative inline-flex items-center justify-center w-7 h-7">
-          <svg width="42" height="42" viewBox="0 0 28 28" className="absolute">
-            <circle cx="14" cy="14" r="10" fill="none" stroke="#1f2937" strokeWidth="0.5"/>
-          </svg>
-          <span className="relative z-10 text-xs font-bold text-gray-900">{displayValue}</span>
-        </div>
-      );
-    }
-    
-    // Bogey - Square
-    if (diff === 1) {
-      return (
-        <div className="relative inline-flex items-center justify-center w-7 h-7">
-          <svg width="42" height="42" viewBox="0 0 28 28" className="absolute">
-            <rect x="3" y="3" width="22" height="22" fill="none" stroke="#1f2937" strokeWidth="0.5"/>
-          </svg>
-          <span className="relative z-10 text-xs font-bold text-gray-900">{displayValue}</span>
-        </div>
-      );
-    }
-    
-    // Double Bogey or worse - Double Square (nested)
     return (
-      <div className="relative inline-flex items-center justify-center w-7 h-7">
-        <svg width="42" height="42" viewBox="0 0 28 28" className="absolute">
-          <rect x="2" y="2" width="24" height="24" fill="none" stroke="#000000ff" strokeWidth="0.5"/>
-          <rect x="7" y="7" width="14" height="14" fill="none" stroke="#000000ff" strokeWidth="0.5"/>
-        </svg>
-        <span className="relative z-10 text-xs font-bold text-gray-900">{displayValue}</span>
+      <div className={`inline-flex items-center justify-center w-full h-full ${bgColor} min-w-[40px]`}>
+        <span className={`text-lg font-bold ${textColor}`}>{displayValue}</span>
       </div>
     );
   };
@@ -214,19 +192,19 @@ export function ScoreDisplayNew({
             </label>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-sm border-2 border-blue-300 hover:border-blue-400 transition-colors"
+              className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-gradient-to-br from-[#618740] to-[#618740] rounded-xl shadow-sm border-2 border-[#618740]-300 hover:border-[#618740]-400 transition-colors"
             >
               <div className="flex items-center gap-2 min-w-0 flex-1">
-                <svg className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-[#ffffff] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span className="text-base font-bold text-gray-800 truncate">
+                <span className="text-base font-bold text-white truncate">
                   {getSelectedPlayerName()}
                 </span>
               </div>
               <svg 
-                className={`w-5 h-5 text-blue-600 flex-shrink-0 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                className={`w-5 h-5 text-[#ffffff] flex-shrink-0 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -239,8 +217,8 @@ export function ScoreDisplayNew({
             {isDropdownOpen && (
               <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border-2 border-gray-200 overflow-hidden">
                 {/* Header */}
-                <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-50">
-                  <div className="text-sm font-bold text-gray-800 text-center">
+                <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-[#618740] to-[#618740]">
+                  <div className="text-sm font-bold text-white text-center">
                   Choose Player for Scorecard
                 </div>
               </div>
@@ -256,7 +234,7 @@ export function ScoreDisplayNew({
                       className={`
                         w-full flex items-center gap-3 px-4 py-3 transition-all duration-200
                         ${isSelected 
-                          ? 'bg-gradient-to-r from-blue-100 to-blue-100 border-l-4 border-blue-600' 
+                          ? 'bg-gradient-to-r from-[#618740] to-[#618740] border-l-4 border-[#618740]' 
                           : 'hover:bg-gray-50 border-l-4 border-transparent'
                         }
                       `}
@@ -265,18 +243,18 @@ export function ScoreDisplayNew({
                       <div className={`
                         w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
                         ${isSelected 
-                          ? 'border-blue-600' 
+                          ? 'border-white' 
                           : 'border-gray-300'
                         }
                       `}>
                         {isSelected && (
-                          <div className="w-3 h-3 rounded-full bg-blue-600"></div>
+                          <div className="w-3 h-3 rounded-full bg-[#618740]"></div>
                         )}
                       </div>
                       
                       {/* Player Info */}
                       <div className="text-left min-w-0 flex-1">
-                        <div className={`font-bold text-base truncate ${isSelected ? 'text-blue-900' : 'text-gray-800'}`}>
+                        <div className={`font-bold text-base truncate ${isSelected ? 'text-white' : 'text-gray-800'}`}>
                           {player.playerName}
                         </div>
                         {(player.bagTagNumber || player.handicap !== undefined) && (
@@ -292,7 +270,7 @@ export function ScoreDisplayNew({
                       <div className={`
                         px-3 py-1 rounded-lg font-bold text-sm
                         ${isSelected 
-                          ? 'bg-blue-600 text-white' 
+                          ? 'bg-[#618740] text-white' 
                           : 'bg-gray-200 text-gray-700'
                         }
                       `}>
@@ -311,13 +289,13 @@ export function ScoreDisplayNew({
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Score Display:
             </label>
-            <div className="inline-flex rounded-xl overflow-hidden border-2 border-blue-300 shadow-sm">
+            <div className="inline-flex rounded-xl overflow-hidden border-2 border-[#618740]-300 shadow-sm">
               <button
                 onClick={() => handleScoreModeChange('stroke')}
                 className={`
                   px-6 py-3 font-bold text-base transition-all duration-200
                   ${scoreMode === 'stroke'
-                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                    ? 'bg-gradient-to-br from-[#618740] to-[#618740] text-white'
                     : 'bg-white text-gray-600 hover:bg-gray-50'
                   }
                 `}
@@ -329,7 +307,7 @@ export function ScoreDisplayNew({
                 className={`
                   px-6 py-3 font-bold text-base transition-all duration-200
                   ${scoreMode === 'over'
-                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                    ? 'bg-gradient-to-br from-[#618740] to-[#618740] text-white'
                     : 'bg-white text-gray-600 hover:bg-gray-50'
                   }
                 `}
@@ -358,17 +336,17 @@ export function ScoreDisplayNew({
             
             {/* Nama Lapangan & Tanggal */}
             <div className="flex-1">
-              <h1 className="text-4xl text-left font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-600 mb-2 leading-tight">
+              <h1 className="text-4xl text-left font-black text-transparent bg-clip-text bg-gradient-to-r from-[#618740] to-[#618740] mb-2 leading-tight">
                 Padang Golf Pangkalan Jati
               </h1>
               <div className="flex items-center gap-2 text-gray-700">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-[#618740]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="font-semibold text-lg">{formatDate(scoreData.teeOffTime)}</span>
                 <span className="mx-2">•</span>
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-[#618740]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -380,7 +358,7 @@ export function ScoreDisplayNew({
           {/* Kanan: Total Score */}
           {mainPlayer && (
             <div className="text-right">
-              <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 leading-none mb-2">
+              <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-black to-black leading-none mb-2">
                 {mainPlayer.totalScore || '-'}
               </div>
               <div className="text-xl font-bold text-gray-800">
@@ -403,41 +381,78 @@ export function ScoreDisplayNew({
               src="/lapangan.png" 
               alt="Golf Course" 
               className="w-full h-full object-cover"
-              style={{ height: '500px' }}
+              style={{ height: '650px', objectPosition: 'center' }}
             />
             {/* Logo di pojok kanan atas */}
             <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-xl p-2 shadow-lg">
               <img 
                 src="/logo-app.png" 
                 alt="Logo" 
-                className="w-16 h-16 object-contain"
+                className="w-20 h-20 object-contain"
+                style={{ transform: 'scale(1.4)'}}
               />
             </div>
           </div>
 
           {/* Kanan: Score Tables */}
-          <div className="w-[60%] space-y-3" style={{ height: '500px', display: 'flex', flexDirection: 'column' }}>
+          <div className="w-[70%]" style={{ height: '650px', display: 'flex', flexDirection: 'column' }}>
+            {/* Legend - Di atas table */}
+            <div className="flex items-center justify-end gap-3 px-3 bg-white rounded-lg   shadow-sm">
+              <div className="flex items-center gap-2">
+                <svg width="24" height="24" viewBox="0 0 28 28">
+                  <circle cx="14" cy="14" r="12" fill="#fcd34d" stroke="#1f2937" strokeWidth="0.8"/>
+                  <circle cx="14" cy="14" r="8" fill="none" stroke="#1f2937" strokeWidth="0.8"/>
+                </svg>
+                <span className="text-sm font-bold text-gray-700">Eagle</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg width="24" height="24" viewBox="0 0 28 28">
+                  <path d="M14 3 L25 23 L3 23 Z" fill="#4ade80" stroke="#1f2937" strokeWidth="0.8"/>
+                </svg>
+                <span className="text-sm font-bold text-gray-700">Birdie</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg width="24" height="24" viewBox="0 0 28 28">
+                  <circle cx="14" cy="14" r="10" fill="#ffffff" stroke="#1f2937" strokeWidth="0.8"/>
+                </svg>
+                <span className="text-sm font-bold text-gray-700">Par</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg width="24" height="24" viewBox="0 0 28 28">
+                  <rect x="3" y="3" width="22" height="22" fill="#fdba74" stroke="#1f2937" strokeWidth="0.8"/>
+                </svg>
+                <span className="text-sm font-bold text-gray-700">Bogey</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg width="24" height="24" viewBox="0 0 28 28">
+                  <rect x="2" y="2" width="24" height="24" fill="#f87171" stroke="#1f2937" strokeWidth="0.8"/>
+                  <rect x="7" y="7" width="14" height="14" fill="none" stroke="#1f2937" strokeWidth="0.8"/>
+                </svg>
+                <span className="text-sm font-bold text-gray-700">Doubles+</span>
+              </div>
+            </div>
+
             {/* OUT Table (Holes 1-9) */}
             <div className="flex-1 overflow-hidden rounded-xl shadow-lg border-2 border-white">
               <table className="w-full border-collapse text-xs h-full">
                 <thead>
-                  <tr className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-                    <th className="px-2 py-1.5 text-left font-bold border border-blue-700/50 text-xs">OUT</th>
+                  <tr className="bg-gradient-to-r from-[#618740] to-[#618740] text-white">
+                    <th className="px-3 py-1.5 text-left font-bold border border-[#618740]/50 text-sm min-w-[120px]">OUT</th>
                     {outHoles.map((hole) => (
-                      <th key={`out-hole-${hole.holeNumber}`} className="px-1 py-1.5 text-center font-bold border border-blue-700/50 text-xs">
+                      <th key={`out-hole-${hole.holeNumber}`} className="px-2 py-1.5 text-center font-bold border border-[#618740]/50 text-sm min-w-[40px]">
                         {hole.holeNumber}
                       </th>
                     ))}
-                    <th className="px-2 py-1.5 text-center font-bold border border-blue-700/50 bg-blue-800/50 text-xs">OUT</th>
+                    <th className="px-3 py-1.5 text-center font-bold border border-[#618740]/50 bg-[#618740]/50 text-sm min-w-[50px]">OUT</th>
                   </tr>
-                  <tr className="bg-gray-400 text-white">
-                    <th className="px-2 py-1 text-left font-semibold border border-blue-600/50 text-xs">PAR</th>
+                  <tr className="bg-gray-400 text-black">
+                    <th className="px-3 py-1 text-left font-semibold border border-[#618740]/50 text-sm">PAR</th>
                     {outHoles.map((hole) => (
-                      <th key={`out-par-${hole.holeNumber}`} className="px-1 py-1 text-center font-semibold border border-blue-600/50 text-xs">
+                      <th key={`out-par-${hole.holeNumber}`} className="px-2 py-1 text-center font-semibold border border-[#618740]/50 text-sm">
                         {hole.par}
                       </th>
                     ))}
-                    <th className="px-2 py-1 text-center font-semibold border border-blue-600/50 bg-gray-500 text-white-900 text-xs">
+                    <th className="px-3 py-1 text-center font-semibold border border-[#618740]/50 bg-gray-400 text-black text-sm">
                       {outPar}
                     </th>
                   </tr>
@@ -450,21 +465,23 @@ export function ScoreDisplayNew({
 
                     return (
                       <tr key={`out-player-${player.playerId}`} className={idx % 2 === 0 ? 'bg-white' : 'bg-white'}>
-                        <td className="px-2 py-1.5 font-bold text-gray-800 border border-gray-300/50 text-xs truncate">
-                          {player.playerName}
+                        <td className="px-2 py-1 font-bold text-gray-800 border border-gray-300/50 text-sm text-left h-8">
+                          <div className="leading-tight max-w-[120px]" title={player.playerName}>
+                            {getFirst3Words(player.playerName)}
+                          </div>
                         </td>
                         {outHoles.map((hole) => {
                           const holeScore = player.scores.find(s => s.holeNumber === hole.holeNumber);
                           return (
                             <td 
                               key={`out-${player.playerId}-${hole.holeNumber}`} 
-                              className="px-1 py-1.5 text-center border border-gray-300/50 bg-white"
+                              className="px-0 py-0 text-center border border-gray-300/50"
                             >
-                              {holeScore ? renderScoreWithSymbol(holeScore.strokes, hole.par) : <span className="text-xs">-</span>}
+                              {holeScore ? renderScoreWithColor(holeScore.strokes, hole.par) : <span className="text-sm">-</span>}
                             </td>
                           );
                         })}
-                        <td className="px-2 py-1.5 text-center font-bold border border-gray-300/50 bg-blue-100 text-blue-900  text-xs">
+                        <td className="px-3 py-1.5 text-center font-bold border border-blue bg-[#618740] text-[#ffffff] text-base">
                           {scoreMode === 'over' 
                             ? (outScore - outPar === 0 ? '0' : (outScore - outPar > 0 ? `+${outScore - outPar}` : outScore - outPar))
                             : (outScore || '-')
@@ -481,27 +498,27 @@ export function ScoreDisplayNew({
             <div className="flex-1 overflow-hidden rounded-xl shadow-lg border-2 border-white">
               <table className="w-full border-collapse text-xs h-full">
                 <thead>
-                  <tr className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-                    <th className="px-2 py-1.5 text-left font-bold border border-green-700/50 text-xs">IN</th>
+                  <tr className="bg-gradient-to-r from-[#618740] to-[#618740] text-white">
+                    <th className="px-3 py-1.5 text-left font-bold border border-green-700/50 text-sm min-w-[120px]">IN</th>
                     {inHoles.map((hole) => (
-                      <th key={`in-hole-${hole.holeNumber}`} className="px-1 py-1.5 text-center font-bold border border-green-700/50 text-xs">
+                      <th key={`in-hole-${hole.holeNumber}`} className="px-2 py-1.5 text-center font-bold border border-green-700/50 text-sm min-w-[40px]">
                         {hole.holeNumber}
                       </th>
                     ))}
-                    <th className="px-2 py-1.5 text-center font-bold border border-blue-700/50 bg-blue-800/50 text-xs">IN</th>
-                    <th className="px-2 py-1.5 text-center font-bold border border-green-700/50 bg-gradient-to-r from-gray-700 to-gray-700 text-xs">TOTAL</th>
+                    <th className="px-3 py-1.5 text-center font-bold border border-[#618740]/50 bg-[#618740]/50 text-sm min-w-[50px]">IN</th>
+                    <th className="px-3 py-1.5 text-center font-bold border border-green-700/50 bg-gradient-to-r from-gray-700 to-gray-700 text-sm min-w-[60px]">TOTAL</th>
                   </tr>
-                  <tr className="bg-gray-400 text-white">
-                    <th className="px-2 py-1 text-left font-semibold border border-green-600/50 text-xs">PAR</th>
+                  <tr className="bg-gray-400 text-black">
+                    <th className="px-3 py-1 text-left font-semibold border border-green-600/50 text-sm">PAR</th>
                     {inHoles.map((hole) => (
-                      <th key={`in-par-${hole.holeNumber}`} className="px-1 py-1 text-center font-semibold border border-blue-600/50 text-xs">
+                      <th key={`in-par-${hole.holeNumber}`} className="px-2 py-1 text-center font-semibold border border-[#618740]/50 text-sm">
                         {hole.par}
                       </th>
                     ))}
-                    <th className="px-2 py-1 text-center font-semibold border border-blue-600/50 bg-gray-500 text-xs">
+                    <th className="px-3 py-1 text-center font-semibold border border-[#618740]/50 bg-gray-400 text-sm">
                       {inPar}
                     </th>
-                    <th className="px-2 py-1 text-center font-semibold border border-gray-600/50 bg-gray-600/50 text-xs">
+                    <th className="px-3 py-1 text-center font-semibold border border-gray-600/50 bg-gray-600/50 text-sm">
                       {totalPar}
                     </th>
                   </tr>
@@ -514,27 +531,29 @@ export function ScoreDisplayNew({
 
                     return (
                       <tr key={`in-player-${player.playerId}`} className={idx % 2 === 0 ? 'bg-white' : 'bg-white'}>
-                        <td className="px-2 py-1.5 font-bold text-gray-800 border border-gray-300/50 text-xs truncate">
-                          {player.playerName}
+                        <td className="px-2 py-1 font-bold text-gray-800 border border-gray-300/50 text-sm text-left h-8">
+                          <div className="leading-tight max-w-[120px]" title={player.playerName}>
+                            {getFirst3Words(player.playerName)}
+                          </div>
                         </td>
                         {inHoles.map((hole) => {
                           const holeScore = player.scores.find(s => s.holeNumber === hole.holeNumber);
                           return (
                             <td 
                               key={`in-${player.playerId}-${hole.holeNumber}`} 
-                              className="px-1 py-1.5 text-center border border-gray-300/50 bg-white"
+                              className="px-0 py-0 text-center border border-gray-300/50"
                             >
-                              {holeScore ? renderScoreWithSymbol(holeScore.strokes, hole.par) : <span className="text-xs">-</span>}
+                              {holeScore ? renderScoreWithColor(holeScore.strokes, hole.par) : <span className="text-sm">-</span>}
                             </td>
                           );
                         })}
-                        <td className="px-2 py-1.5 text-center font-bold border border-gray-300/50 bg-blue-100/80 text-blue-900 text-xs">
+                        <td className="px-3 py-1.5 text-center font-bold border border-gray-300/50 bg-[#618740] text-[#ffffff] text-base">
                           {scoreMode === 'over'
                             ? (inScore - inPar === 0 ? '0' : (inScore - inPar > 0 ? `+${inScore - inPar}` : inScore - inPar))
                             : (inScore || '-')
                           }
                         </td>
-                        <td className="px-2 py-1.5 text-center font-bold border border-gray-300/50 bg-gradient-to-br from-gray-400/80 to-gray-200/80 text-white-900 text-sm">
+                        <td className="px-3 py-1.5 text-center font-bold border border-gray-300/50 bg-gradient-to-br from-gray-400/80 to-gray-200/80 text-gray-900 text-lg">
                           {player.totalScore || '-'}
                         </td>
                       </tr>
@@ -552,14 +571,14 @@ export function ScoreDisplayNew({
             <img 
               src="/background-1.jpg" 
               alt="Photo 1" 
-              className="w-full h-48 object-cover"
+              className="w-full h-32 object-cover"
             />
           </div>
           <div className="flex-1 rounded-2xl overflow-hidden shadow-xl border-2 border-gray-200">
             <img 
               src="/background-2.jpg" 
               alt="Photo 2" 
-              className="w-full h-48 object-cover"
+              className="w-full h-32 object-cover"
             />
           </div>
         </div>
@@ -567,16 +586,15 @@ export function ScoreDisplayNew({
         {/* Footer */}
         <div className="pt-3 border-t-2 border-gray-200 flex items-center justify-between text-xs text-gray-600">
           <div className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+            <img 
+              src="/icon.png" 
+              alt="GolfScoreID Icon" 
+              className="w-7 h-7 object-contain"
+            />
             <span className="font-semibold">GolfScoreID Created by PT DECOM FENO MAHAKA</span>
           </div>
           <div className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[#618740]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
