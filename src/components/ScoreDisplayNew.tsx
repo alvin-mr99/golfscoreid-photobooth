@@ -116,8 +116,21 @@ export function ScoreDisplayNew({
     return words.slice(0, 3).join(' ');
   };
 
-  // All players are displayed in the table
-  const displayedPlayers = scoreData.players;
+  // All players are displayed in the table - always show 6 rows
+  const MAX_PLAYERS = 6;
+  const displayedPlayers = [...scoreData.players];
+  
+  // Fill empty rows if less than 6 players
+  while (displayedPlayers.length < MAX_PLAYERS) {
+    displayedPlayers.push({
+      playerId: `empty-${displayedPlayers.length}`,
+      playerName: '',
+      scores: [],
+      totalScore: 0,
+      bagTagNumber: '',
+      handicap: undefined
+    });
+  }
 
   // Get all 18 holes from scoreData
   const holes = scoreData.holes || [];
@@ -172,7 +185,7 @@ export function ScoreDisplayNew({
     
     return (
       <div className={`inline-flex items-center justify-center w-full h-full ${bgColor} min-w-[40px]`}>
-        <span className={`text-lg font-bold ${textColor}`}>{displayValue}</span>
+        <span className={`text-[17px] font-bold ${textColor}`}>{displayValue}</span>
       </div>
     );
   };
@@ -258,7 +271,10 @@ export function ScoreDisplayNew({
                           {player.playerName}
                         </div>
                         {(player.bagTagNumber || player.handicap !== undefined) && (
-                          <div className="text-xs text-gray-600 mt-0.5">
+                          <div className={`text-xs mt-0.5 ${isSelected 
+                          ? 'text-white' 
+                          : 'text-gray'
+                        } `}>
                             {player.bagTagNumber && `Bag: ${player.bagTagNumber}`}
                             {player.bagTagNumber && player.handicap !== undefined && ' • '}
                             {player.handicap !== undefined && `HCP: ${player.handicap}`}
@@ -340,17 +356,17 @@ export function ScoreDisplayNew({
                 Padang Golf Pangkalan Jati
               </h1>
               <div className="flex items-center gap-2 text-gray-700">
-                <svg className="w-5 h-5 text-[#618740]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-[#618740]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span className="font-semibold text-lg">{formatDate(scoreData.teeOffTime)}</span>
-                <span className="mx-2">•</span>
-                <svg className="w-5 h-5 text-[#618740]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span className="font-semibold text-[20px]">{formatDate(scoreData.teeOffTime)}</span>
+                <span className="mx-2 text-[20px]">•</span>
+                <svg className="w-6 h-6 text-[#618740]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="font-semibold text-lg">{formatTime(scoreData.teeOffTime)}</span>
+                <span className="font-semibold text-[20px]">{formatTime(scoreData.teeOffTime)}</span>
               </div>
             </div>
           </div>
@@ -361,11 +377,11 @@ export function ScoreDisplayNew({
               <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-black to-black leading-none mb-2">
                 {mainPlayer.totalScore || '-'}
               </div>
-              <div className="text-xl font-bold text-gray-800">
+              <div className="text-2xl font-bold text-gray-800">
                 {mainPlayer.playerName}
               </div>
               {mainPlayer.handicap !== undefined && (
-                <div className="text-sm text-gray-600 font-medium">
+                <div className="text-[17px] text-gray-600 font-medium">
                   HCP: {mainPlayer.handicap}
                 </div>
               )}
@@ -373,119 +389,146 @@ export function ScoreDisplayNew({
           )}
         </div>
 
-        {/* BARIS 2: Foto Lapangan (40%) & Score Table (60%) */}
+        {/* BARIS 2: Foto Lapangan (25%) & Score Table (75%) */}
         <div className="flex gap-4">
-          {/* Kiri: Foto Lapangan dengan Logo */}
-          <div className="w-[40%] relative rounded-2xl overflow-hidden shadow-xl">
-            <img 
-              src="/lapangan.png" 
-              alt="Golf Course" 
-              className="w-full h-full object-cover"
-              style={{ height: '650px', objectPosition: 'center' }}
-            />
-            {/* Logo di pojok kanan atas */}
-            <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-xl p-2 shadow-lg">
+          {/* Kiri: Dua Foto Lapangan Atas Bawah dengan Logo */}
+          <div className="w-[25%] flex flex-col gap-4">
+            {/* Foto Atas - Sejajar dengan legend sampai akhir OUT table */}
+            <div className="relative rounded-2xl overflow-hidden shadow-xl" style={{ height: '428px' }}>
               <img 
-                src="/logo-app.png" 
-                alt="Logo" 
-                className="w-20 h-20 object-contain"
-                style={{ transform: 'scale(1.4)'}}
+                src="/lapangan1.png" 
+                alt="Golf Course 1" 
+                className="w-full h-full object-cover"
+              />
+              {/* Logo di pojok kanan atas */}
+              <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-xl p-2 shadow-lg">
+                <img 
+                  src="/logo-app.png" 
+                  alt="Logo" 
+                  className="w-20 h-20 object-contain"
+                  style={{ transform: 'scale(1.6)'}}
+                />
+              </div>
+            </div>
+            {/* Foto Bawah - Sama tinggi dengan IN table */}
+            <div className="relative rounded-2xl overflow-hidden shadow-xl" style={{ height: '380px' }}>
+              <img 
+                src="/lapangan2.png" 
+                alt="Golf Course 2" 
+                className="w-full h-full object-cover"
               />
             </div>
           </div>
 
           {/* Kanan: Score Tables */}
-          <div className="w-[70%]" style={{ height: '650px', display: 'flex', flexDirection: 'column' }}>
+          <div className="w-[75%]" style={{ height: '800px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {/* Legend - Di atas table */}
-            <div className="flex items-center justify-end gap-3 px-3 bg-white rounded-lg   shadow-sm">
+            <div className="flex items-center justify-end gap-4 px-3 py-2 bg-white rounded-lg shadow-sm flex-shrink-0">
               <div className="flex items-center gap-2">
-                <svg width="24" height="24" viewBox="0 0 28 28">
+                <svg width="32" height="32" viewBox="0 0 28 28">
                   <circle cx="14" cy="14" r="12" fill="#fcd34d" stroke="#1f2937" strokeWidth="0.8"/>
                   <circle cx="14" cy="14" r="8" fill="none" stroke="#1f2937" strokeWidth="0.8"/>
                 </svg>
-                <span className="text-sm font-bold text-gray-700">Eagle</span>
+                <span className="text-[17px] font-bold text-gray-700">Eagle</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg width="24" height="24" viewBox="0 0 28 28">
+                <svg width="32" height="32" viewBox="0 0 28 28">
                   <path d="M14 3 L25 23 L3 23 Z" fill="#4ade80" stroke="#1f2937" strokeWidth="0.8"/>
                 </svg>
-                <span className="text-sm font-bold text-gray-700">Birdie</span>
+                <span className="text-[17px] font-bold text-gray-700">Birdie</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg width="24" height="24" viewBox="0 0 28 28">
+                <svg width="32" height="32" viewBox="0 0 28 28">
                   <circle cx="14" cy="14" r="10" fill="#ffffff" stroke="#1f2937" strokeWidth="0.8"/>
                 </svg>
-                <span className="text-sm font-bold text-gray-700">Par</span>
+                <span className="text-[17px] font-bold text-gray-700">Par</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg width="24" height="24" viewBox="0 0 28 28">
+                <svg width="32" height="32" viewBox="0 0 28 28">
                   <rect x="3" y="3" width="22" height="22" fill="#fdba74" stroke="#1f2937" strokeWidth="0.8"/>
                 </svg>
-                <span className="text-sm font-bold text-gray-700">Bogey</span>
+                <span className="text-[17px] font-bold text-gray-700">Bogey</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg width="24" height="24" viewBox="0 0 28 28">
+                <svg width="32" height="32" viewBox="0 0 28 28">
                   <rect x="2" y="2" width="24" height="24" fill="#f87171" stroke="#1f2937" strokeWidth="0.8"/>
                   <rect x="7" y="7" width="14" height="14" fill="none" stroke="#1f2937" strokeWidth="0.8"/>
                 </svg>
-                <span className="text-sm font-bold text-gray-700">Doubles+</span>
+                <span className="text-[17px] font-bold text-gray-700">Doubles+</span>
               </div>
             </div>
 
             {/* OUT Table (Holes 1-9) */}
-            <div className="flex-1 overflow-hidden rounded-xl shadow-lg border-2 border-white">
-              <table className="w-full border-collapse text-xs h-full">
+            <div className="overflow-hidden rounded-xl shadow-lg border-2 border-white" style={{ height: '380px' }}>
+              <table className="w-full border-collapse" style={{ height: '100%', tableLayout: 'fixed' }}>
                 <thead>
-                  <tr className="bg-gradient-to-r from-[#618740] to-[#618740] text-white">
-                    <th className="px-3 py-1.5 text-left font-bold border border-[#618740]/50 text-sm min-w-[120px]">OUT</th>
+                  <tr className="bg-gradient-to-r from-[#618740] to-[#618740] text-white" style={{ height: '32px' }}>
+                    <th className="px-2 py-1 text-left font-bold border border-[#618740]/50 text-[17px]" style={{ width: '115px' }}>OUT</th>
                     {outHoles.map((hole) => (
-                      <th key={`out-hole-${hole.holeNumber}`} className="px-2 py-1.5 text-center font-bold border border-[#618740]/50 text-sm min-w-[40px]">
+                      <th key={`out-hole-${hole.holeNumber}`} className="px-1 py-1 text-center font-bold border border-[#618740]/50 text-[17px]" style={{ width: '35px' }}>
                         {hole.holeNumber}
                       </th>
                     ))}
-                    <th className="px-3 py-1.5 text-center font-bold border border-[#618740]/50 bg-[#618740]/50 text-sm min-w-[50px]">OUT</th>
+                    <th className="px-1 py-1 text-center font-bold border border-[#618740]/50 bg-[#618740]/50 text-[17px]" style={{ width: '35px' }}>OUT</th>
                   </tr>
-                  <tr className="bg-gray-400 text-black">
-                    <th className="px-3 py-1 text-left font-semibold border border-[#618740]/50 text-sm">PAR</th>
+                  <tr className="bg-gray-400 text-black" style={{ height: '28px' }}>
+                    <th className="px-2 py-1 text-left font-semibold border border-[#618740]/50 text-[17px]">PAR</th>
                     {outHoles.map((hole) => (
-                      <th key={`out-par-${hole.holeNumber}`} className="px-2 py-1 text-center font-semibold border border-[#618740]/50 text-sm">
+                      <th key={`out-par-${hole.holeNumber}`} className="px-1 py-1 text-center font-semibold border border-[#618740]/50 text-[17px]">
                         {hole.par}
                       </th>
                     ))}
-                    <th className="px-3 py-1 text-center font-semibold border border-[#618740]/50 bg-gray-400 text-black text-sm">
+                    <th className="px-1 py-1 text-center font-semibold border border-[#618740]/50 bg-gray-400 text-black text-[17px]">
                       {outPar}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {displayedPlayers.map((player, idx) => {
+                    const isEmptyRow = !player.playerName;
                     const outScore = player.scores
                       .filter(s => s.holeNumber >= 1 && s.holeNumber <= 9)
                       .reduce((sum, s) => sum + s.strokes, 0);
 
                     return (
-                      <tr key={`out-player-${player.playerId}`} className={idx % 2 === 0 ? 'bg-white' : 'bg-white'}>
-                        <td className="px-2 py-1 font-bold text-gray-800 border border-gray-300/50 text-sm text-left h-8">
-                          <div className="leading-tight max-w-[120px]" title={player.playerName}>
-                            {getFirst3Words(player.playerName)}
-                          </div>
+                      <tr key={`out-player-${player.playerId}`} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'} style={{ height: '42px' }}>
+                        <td className="px-2 font-bold text-gray-800 border border-gray-300/50 text-[17px] text-left align-middle" style={{ width: '115px' }}>
+                          {!isEmptyRow ? (
+                            <div className="leading-tight truncate" title={player.playerName}>
+                              {getFirst3Words(player.playerName)}
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center h-full">
+                              <span className="text-gray-300">-</span>
+                            </div>
+                          )}
                         </td>
                         {outHoles.map((hole) => {
                           const holeScore = player.scores.find(s => s.holeNumber === hole.holeNumber);
                           return (
                             <td 
                               key={`out-${player.playerId}-${hole.holeNumber}`} 
-                              className="px-0 py-0 text-center border border-gray-300/50"
+                              className="px-0 py-0 text-center border border-gray-300/50 align-middle"
+                              style={{ width: '35px' }}
                             >
-                              {holeScore ? renderScoreWithColor(holeScore.strokes, hole.par) : <span className="text-sm">-</span>}
+                              {!isEmptyRow && holeScore ? (
+                                <div className="flex items-center justify-center h-full w-full">
+                                  {renderScoreWithColor(holeScore.strokes, hole.par)}
+                                </div>
+                              ) : (
+                                <div className="flex items-center justify-center h-full">
+                                  <span className="text-[17px] text-gray-300">-</span>
+                                </div>
+                              )}
                             </td>
                           );
                         })}
-                        <td className="px-3 py-1.5 text-center font-bold border border-blue bg-[#618740] text-[#ffffff] text-base">
-                          {scoreMode === 'over' 
-                            ? (outScore - outPar === 0 ? '0' : (outScore - outPar > 0 ? `+${outScore - outPar}` : outScore - outPar))
-                            : (outScore || '-')
-                          }
+                        <td className="px-1 text-center font-bold border border-blue bg-[#618740] text-[#ffffff] text-[17px] align-middle" style={{ width: '35px' }}>
+                          {!isEmptyRow && (
+                            scoreMode === 'over' 
+                              ? (outScore - outPar === 0 ? '0' : (outScore - outPar > 0 ? `+${outScore - outPar}` : outScore - outPar))
+                              : (outScore || '-')
+                          )}
                         </td>
                       </tr>
                     );
@@ -495,66 +538,83 @@ export function ScoreDisplayNew({
             </div>
 
             {/* IN Table (Holes 10-18) */}
-            <div className="flex-1 overflow-hidden rounded-xl shadow-lg border-2 border-white">
-              <table className="w-full border-collapse text-xs h-full">
+            <div className="overflow-hidden rounded-xl shadow-lg border-2 border-white" style={{ height: '380px' }}>
+              <table className="w-full border-collapse" style={{ height: '100%', tableLayout: 'fixed' }}>
                 <thead>
-                  <tr className="bg-gradient-to-r from-[#618740] to-[#618740] text-white">
-                    <th className="px-3 py-1.5 text-left font-bold border border-green-700/50 text-sm min-w-[120px]">IN</th>
+                  <tr className="bg-gradient-to-r from-[#618740] to-[#618740] text-white" style={{ height: '32px' }}>
+                    <th className="px-2 py-1 text-left font-bold border border-green-700/50 text-[17px]" style={{ width: '115px' }}>IN</th>
                     {inHoles.map((hole) => (
-                      <th key={`in-hole-${hole.holeNumber}`} className="px-2 py-1.5 text-center font-bold border border-green-700/50 text-sm min-w-[40px]">
+                      <th key={`in-hole-${hole.holeNumber}`} className="px-1 py-1 text-center font-bold border border-green-700/50 text-[17px]" style={{ width: '35px' }}>
                         {hole.holeNumber}
                       </th>
                     ))}
-                    <th className="px-3 py-1.5 text-center font-bold border border-[#618740]/50 bg-[#618740]/50 text-sm min-w-[50px]">IN</th>
-                    <th className="px-3 py-1.5 text-center font-bold border border-green-700/50 bg-gradient-to-r from-gray-700 to-gray-700 text-sm min-w-[60px]">TOTAL</th>
+                    <th className="px-1 py-1 text-center font-bold border border-[#618740]/50 bg-[#618740]/50 text-[17px]" style={{ width: '35px' }}>IN</th>
+                    <th className="px-1 py-1 text-center font-bold border border-green-700/50 bg-gradient-to-r from-gray-700 to-gray-700 text-[17px]" style={{ width: '35px' }}>TOT</th>
                   </tr>
-                  <tr className="bg-gray-400 text-black">
-                    <th className="px-3 py-1 text-left font-semibold border border-green-600/50 text-sm">PAR</th>
+                  <tr className="bg-gray-400 text-black" style={{ height: '28px' }}>
+                    <th className="px-2 py-1 text-left font-semibold border border-green-600/50 text-[17px]">PAR</th>
                     {inHoles.map((hole) => (
-                      <th key={`in-par-${hole.holeNumber}`} className="px-2 py-1 text-center font-semibold border border-[#618740]/50 text-sm">
+                      <th key={`in-par-${hole.holeNumber}`} className="px-1 py-1 text-center font-semibold border border-[#618740]/50 text-[17px]">
                         {hole.par}
                       </th>
                     ))}
-                    <th className="px-3 py-1 text-center font-semibold border border-[#618740]/50 bg-gray-400 text-sm">
+                    <th className="px-1 py-1 text-center font-semibold border border-[#618740]/50 bg-gray-400 text-[17px]">
                       {inPar}
                     </th>
-                    <th className="px-3 py-1 text-center font-semibold border border-gray-600/50 bg-gray-600/50 text-sm">
+                    <th className="px-1 py-1 text-center font-semibold border border-gray-600/50 bg-gray-600/50 text-[17px]">
                       {totalPar}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {displayedPlayers.map((player, idx) => {
+                    const isEmptyRow = !player.playerName;
                     const inScore = player.scores
                       .filter(s => s.holeNumber >= 10 && s.holeNumber <= 18)
                       .reduce((sum, s) => sum + s.strokes, 0);
 
                     return (
-                      <tr key={`in-player-${player.playerId}`} className={idx % 2 === 0 ? 'bg-white' : 'bg-white'}>
-                        <td className="px-2 py-1 font-bold text-gray-800 border border-gray-300/50 text-sm text-left h-8">
-                          <div className="leading-tight max-w-[120px]" title={player.playerName}>
-                            {getFirst3Words(player.playerName)}
-                          </div>
+                      <tr key={`in-player-${player.playerId}`} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'} style={{ height: '42px' }}>
+                        <td className="px-2 font-bold text-gray-800 border border-gray-300/50 text-[17px] text-left align-middle" style={{ width: '115px' }}>
+                          {!isEmptyRow ? (
+                            <div className="leading-tight truncate" title={player.playerName}>
+                              {getFirst3Words(player.playerName)}
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center h-full">
+                              <span className="text-gray-300">-</span>
+                            </div>
+                          )}
                         </td>
                         {inHoles.map((hole) => {
                           const holeScore = player.scores.find(s => s.holeNumber === hole.holeNumber);
                           return (
                             <td 
                               key={`in-${player.playerId}-${hole.holeNumber}`} 
-                              className="px-0 py-0 text-center border border-gray-300/50"
+                              className="px-0 py-0 text-center border border-gray-300/50 align-middle"
+                              style={{ width: '35px' }}
                             >
-                              {holeScore ? renderScoreWithColor(holeScore.strokes, hole.par) : <span className="text-sm">-</span>}
+                              {!isEmptyRow && holeScore ? (
+                                <div className="flex items-center justify-center h-full w-full">
+                                  {renderScoreWithColor(holeScore.strokes, hole.par)}
+                                </div>
+                              ) : (
+                                <div className="flex items-center justify-center h-full">
+                                  <span className="text-[17px] text-gray-300">-</span>
+                                </div>
+                              )}
                             </td>
                           );
                         })}
-                        <td className="px-3 py-1.5 text-center font-bold border border-gray-300/50 bg-[#618740] text-[#ffffff] text-base">
-                          {scoreMode === 'over'
-                            ? (inScore - inPar === 0 ? '0' : (inScore - inPar > 0 ? `+${inScore - inPar}` : inScore - inPar))
-                            : (inScore || '-')
-                          }
+                        <td className="px-1 text-center font-bold border border-gray-300/50 bg-[#618740] text-[#ffffff] text-[17px] align-middle" style={{ width: '35px' }}>
+                          {!isEmptyRow && (
+                            scoreMode === 'over'
+                              ? (inScore - inPar === 0 ? '0' : (inScore - inPar > 0 ? `+${inScore - inPar}` : inScore - inPar))
+                              : (inScore || '-')
+                          )}
                         </td>
-                        <td className="px-3 py-1.5 text-center font-bold border border-gray-300/50 bg-gradient-to-br from-gray-400/80 to-gray-200/80 text-gray-900 text-lg">
-                          {player.totalScore || '-'}
+                        <td className="px-1 text-center font-bold border border-gray-300/50 bg-gradient-to-br from-gray-400/80 to-gray-200/80 text-gray-900 text-[17px] align-middle" style={{ width: '35px' }}>
+                          {!isEmptyRow && (player.totalScore || '-')}
                         </td>
                       </tr>
                     );
@@ -565,40 +625,22 @@ export function ScoreDisplayNew({
           </div>
         </div>
 
-        {/* BARIS 3: Dua Foto Landscape */}
-        <div className="flex gap-4">
-          <div className="flex-1 rounded-2xl overflow-hidden shadow-xl border-2 border-gray-200">
-            <img 
-              src="/background-1.jpg" 
-              alt="Photo 1" 
-              className="w-full h-32 object-cover"
-            />
-          </div>
-          <div className="flex-1 rounded-2xl overflow-hidden shadow-xl border-2 border-gray-200">
-            <img 
-              src="/background-2.jpg" 
-              alt="Photo 2" 
-              className="w-full h-32 object-cover"
-            />
-          </div>
-        </div>
-
         {/* Footer */}
-        <div className="pt-3 border-t-2 border-gray-200 flex items-center justify-between text-xs text-gray-600">
-          <div className="flex items-center gap-2">
+        <div className="pt-4 border-t-2 border-gray-200 flex items-center justify-between text-gray-600">
+          <div className="flex items-center gap-3">
             <img 
               src="/icon.png" 
               alt="GolfScoreID Icon" 
-              className="w-7 h-7 object-contain"
+              className="w-10 h-10 object-contain"
             />
-            <span className="font-semibold">GolfScoreID Created by PT DECOM FENO MAHAKA</span>
+            <span className="font-semibold text-[17px]">GolfScoreID Created by PT DECOM FENO MAHAKA</span>
           </div>
-          <div className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-[#618740]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-3">
+            <svg className="w-6 h-6 text-[#618740]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="font-medium">Printed: {formatCurrentDateTime()}</span>
+            <span className="font-medium text-[17px]">Printed: {formatCurrentDateTime()}</span>
           </div>
         </div>
       </div>

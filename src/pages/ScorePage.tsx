@@ -193,7 +193,7 @@ export function ScorePage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen w-full">
       {/* Background Image */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
@@ -210,59 +210,55 @@ export function ScorePage() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 min-h-screen p-4 md:p-8 w-full">
-        <div className="w-full mx-auto">
-          {/* Header - Optimized for Portrait */}
-          <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in-down">
-            <div className="flex items-center gap-3">
-              <div className="p-2 sm:p-3 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border-2 border-white/50">
-                <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="relative z-10 min-h-screen p-3 sm:p-4 lg:p-6">
+        <div className="max-w-[1920px] mx-auto space-y-3 sm:space-y-4">
+          {/* Header - Compact and Responsive */}
+          <div className="flex items-center justify-between gap-2 sm:gap-4 animate-fade-in-down">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-white/95 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-xl border-2 border-white/50">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} 
                         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white drop-shadow-2xl" style={{ textShadow: '0 2px 10px rgba(0, 0, 0, 0.8)' }}>
+              <h1 className="text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-white drop-shadow-2xl" style={{ textShadow: '0 2px 10px rgba(0, 0, 0, 0.8)' }}>
                 Scorecard Printing
               </h1>
             </div>
             <button
               onClick={handleStartOver}
-              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white/90 backdrop-blur-xl text-gray-800 rounded-2xl font-bold text-base sm:text-lg
+              className="px-3 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 bg-white/90 backdrop-blur-xl text-gray-800 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base lg:text-lg
                        hover:bg-white hover:scale-105 transition-all duration-300
                        focus:outline-none focus:ring-4 focus:ring-white/50 shadow-2xl
-                       flex items-center justify-center gap-3 border-2 border-white/50"
+                       flex items-center justify-center gap-2 sm:gap-3 border-2 border-white/50"
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} 
                       d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              Start Over
+              <span className="hidden sm:inline">Start Over</span>
             </button>
           </div>
 
-          {/* Main Content - Single Column for Portrait */}
-          <div className=" mx-auto space-y-4 sm:space-y-6 animate-fade-in-up">
-            {/* Score Display */}
-            <div className="bg-white/15 backdrop-blur-2xl rounded-3xl shadow-2xl p-4 sm:p-6 border-2 border-white/30 hover:border-white/50 transition-all duration-500">
-              <ScoreDisplayNew 
-                scoreData={scoreData} 
-                onSelectedPlayersChange={handleSelectedPlayersChange}
-                scoreMode={scoreMode}
-                onScoreModeChange={setScoreMode}
-              />
-            </div>
+          {/* Score Display */}
+          <div className="bg-white/15 backdrop-blur-2xl rounded-2xl sm:rounded-3xl shadow-2xl p-3 sm:p-4 lg:p-6 border-2 border-white/30 hover:border-white/50 transition-all duration-500 animate-fade-in-up">
+            <ScoreDisplayNew 
+              scoreData={scoreData} 
+              onSelectedPlayersChange={handleSelectedPlayersChange}
+              scoreMode={scoreMode}
+              onScoreModeChange={setScoreMode}
+            />
+          </div>
 
-           
-            {/* Print Button */}
-            <div className="animate-fade-in">
-              <PrintScoreButton
-                scoreData={scoreData}
-                selectedPhotos={selectedPhotos}
-                selectedPlayerIds={selectedPlayerIds}
-                scoreMode={scoreMode}
-                onPrintComplete={handlePrintComplete}
-              />
-            </div>
+          {/* Print Button */}
+          <div className="animate-fade-in">
+            <PrintScoreButton
+              scoreData={scoreData}
+              selectedPhotos={selectedPhotos}
+              selectedPlayerIds={selectedPlayerIds}
+              scoreMode={scoreMode}
+              onPrintComplete={handlePrintComplete}
+            />
           </div>
         </div>
       </div>

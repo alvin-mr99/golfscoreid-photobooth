@@ -85,10 +85,21 @@ class PrintScoreService {
     const outHoles = holes.slice(0, 9);
     const inHoles = holes.slice(9, 18);
 
-    // Filter players based on selection
-    const playersToDisplay = selectedPlayerIds && selectedPlayerIds.length > 0
-      ? scoreData.players.filter(p => selectedPlayerIds.includes(p.playerId))
-      : scoreData.players;
+    // Always show 6 players (fill with empty rows if needed)
+    const MAX_PLAYERS = 6;
+    const playersToDisplay = [...scoreData.players];
+    
+    // Fill empty rows if less than 6 players
+    while (playersToDisplay.length < MAX_PLAYERS) {
+      playersToDisplay.push({
+        playerId: `empty-${playersToDisplay.length}`,
+        playerName: '',
+        scores: [],
+        totalScore: 0,
+        bagTagNumber: '',
+        handicap: undefined
+      });
+    }
 
     const formatDate = (timestamp: number) => {
       return new Date(timestamp).toLocaleDateString('id-ID', {
@@ -169,8 +180,8 @@ class PrintScoreService {
       <style>
         ${isPrint ? '@media print {' : ''}
           @page {
-            size: 148mm 105mm landscape;
-            margin: 3mm;
+            size: 152mm 102mm landscape;
+            margin: 0;
           }
           
           * {
@@ -195,8 +206,8 @@ class PrintScoreService {
           }
           
           .print-content {
-            width: 100%;
-            height: 100%;
+            width: 152mm;
+            height: 102mm;
             background: white;
             border-radius: 8px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -206,11 +217,11 @@ class PrintScoreService {
           }
           
           .print-body {
-            padding: 6mm;
+            padding: 3mm;
             height: 100%;
             display: flex;
             flex-direction: column;
-            gap: 2mm;
+            gap: 1.5mm;
           }
           
           /* Header Section */
@@ -219,8 +230,8 @@ class PrintScoreService {
             align-items: center;
             justify-content: space-between;
             gap: 3mm;
-            padding-bottom: 2mm;
-            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1mm;
+            border-bottom: 1.5px solid #e5e7eb;
             flex-shrink: 0;
           }
           
@@ -236,20 +247,20 @@ class PrintScoreService {
           }
           
           .logo-container img {
-            width: 12mm;
-            height: 12mm;
+            width: 10mm;
+            height: 10mm;
             object-fit: contain;
           }
           
           .header-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 900;
             background: linear-gradient(to right, #618740, #618740);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin: 0 0 1mm 0;
-            line-height: 1.1;
+            margin: 0 0 0.5mm 0;
+            line-height: 1;
             text-align: left;
           }
           
@@ -277,14 +288,14 @@ class PrintScoreService {
           }
           
           .total-score {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 900;
             background: linear-gradient(to right, #000000, #000000);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1;
-            margin-bottom: 1mm;
+            margin-bottom: 0.5mm;
           }
           
           .player-name-header {
@@ -307,15 +318,31 @@ class PrintScoreService {
             min-height: 0;
           }
           
-          .course-image {
-            width: 38%;
+          .course-images {
+            width: 25%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5mm;
+          }
+          
+          .course-image-top {
+            height: 42mm;
             position: relative;
-            border-radius: 4mm;
+            border-radius: 2mm;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           }
           
-          .course-image img {
+          .course-image-bottom {
+            height: 28mm;
+            position: relative;
+            border-radius: 2mm;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          
+          .course-image-top img,
+          .course-image-bottom img {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -324,26 +351,27 @@ class PrintScoreService {
           
           .logo-overlay {
             position: absolute;
-            top: 2mm;
-            right: 2mm;
+            top: 1.5mm;
+            right: 1.5mm;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(2px);
-            border-radius: 3mm;
-            padding: 1mm;
+            border-radius: 1.5mm;
+            padding: 0.8mm;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
           }
           
           .logo-overlay img {
-            width: 10mm;
-            height: 10mm;
+            width: 12mm;
+            height: 12mm;
             object-fit: contain;
+            transform: scale(1.6);
           }
           
           .score-tables {
-            width: 62%;
+            width: 75%;
             display: flex;
             flex-direction: column;
-            gap: 0;
+            gap: 1mm;
             height: 100%;
           }
           
@@ -351,24 +379,27 @@ class PrintScoreService {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 2mm;
-            padding: 0 1mm 1mm 1mm;
+            gap: 1.5mm;
+            padding: 0.8mm 1.5mm;
             background: white;
+            border-radius: 1.5mm;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
           }
           
           .legend-item {
             display: flex;
             align-items: center;
-            gap: 1mm;
+            gap: 0.8mm;
           }
           
           .legend-item svg {
-            width: 8px;
-            height: 8px;
+            width: 9px;
+            height: 9px;
           }
           
           .legend-item span {
-            font-size: 6px;
+            font-size: 6.5px;
             font-weight: bold;
             color: #374151;
           }
@@ -377,19 +408,20 @@ class PrintScoreService {
             flex: 1;
             overflow: hidden;
             border-radius: 2mm;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            border: 1px solid #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 2px solid #fff;
           }
           
           .score-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 7px;
+            font-size: 8px;
             height: 100%;
+            table-layout: fixed;
           }
           
           .score-table th {
-            padding: 1mm 1mm;
+            padding: 1mm;
             text-align: center;
             border: 0.5px solid rgba(97, 135, 64, 0.5);
             font-weight: bold;
@@ -399,12 +431,14 @@ class PrintScoreService {
             padding: 0;
             border: 0.5px solid rgba(209, 213, 219, 0.5);
             text-align: center;
+            vertical-align: middle;
           }
           
           .header-out, .header-in {
             background: linear-gradient(to right, #618740, #618740) !important;
             color: white !important;
-            font-size: 7px;
+            font-size: 8px;
+            height: 4mm;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -412,7 +446,8 @@ class PrintScoreService {
           .header-par {
             background: #9ca3af !important;
             color: #000000 !important;
-            font-size: 7px;
+            font-size: 8px;
+            height: 3.5mm;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -420,10 +455,10 @@ class PrintScoreService {
           .player-name-cell {
             text-align: left !important;
             font-weight: bold;
-            padding: 1mm 1.5mm !important;
-            font-size: 6px;
+            padding: 1mm 2mm !important;
+            font-size: 8px;
             color: #1f2937;
-            max-width: 18mm;
+            width: 20mm;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -431,8 +466,13 @@ class PrintScoreService {
           
           .score-table tbody tr {
             background: white !important;
+            height: 5mm;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+          }
+          
+          .score-table tbody tr:nth-child(even) {
+            background: rgba(249, 250, 251, 0.3) !important;
           }
           
           .score-cell {
@@ -440,6 +480,7 @@ class PrintScoreService {
             font-size: 8px;
             background: white !important;
             padding: 0 !important;
+            width: 5mm;
           }
           
           .score-cell-inner {
@@ -448,7 +489,7 @@ class PrintScoreService {
             justify-content: center;
             width: 100%;
             height: 100%;
-            min-width: 6mm;
+            min-width: 5mm;
             padding: 1.5mm 0;
           }
           
@@ -492,7 +533,8 @@ class PrintScoreService {
             color: #ffffff !important;
             font-weight: bold;
             font-size: 8px;
-            padding: 1mm 2mm !important;
+            padding: 1mm !important;
+            width: 5mm;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -501,42 +543,21 @@ class PrintScoreService {
             background: linear-gradient(to bottom right, rgba(156, 163, 175, 0.8), rgba(209, 213, 219, 0.8)) !important;
             color: #1f2937 !important;
             font-weight: bold;
-            font-size: 9px;
-            padding: 1mm 2mm !important;
+            font-size: 8px;
+            padding: 1mm !important;
+            width: 5mm;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
           
-          /* Photos Section */
-          .photos-section {
-            display: flex;
-            gap: 2mm;
-            flex-shrink: 0;
-            height: 16mm;
-          }
-          
-          .photo-item {
-            flex: 1;
-            border-radius: 3mm;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb;
-          }
-          
-          .photo-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-          
           /* Footer */
           .print-footer {
-            padding-top: 1.5mm;
-            border-top: 1px solid #e5e7eb;
+            padding-top: 1mm;
+            border-top: 1.5px solid #e5e7eb;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 5px;
+            font-size: 6px;
             color: #6b7280;
             flex-shrink: 0;
           }
@@ -544,7 +565,7 @@ class PrintScoreService {
           .footer-left, .footer-right {
             display: flex;
             align-items: center;
-            gap: 1mm;
+            gap: 1.5mm;
           }
           
           .footer-left img {
@@ -554,8 +575,8 @@ class PrintScoreService {
           }
           
           .footer-left svg, .footer-right svg {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
             color: #618740;
             flex-shrink: 0;
           }
@@ -608,11 +629,16 @@ class PrintScoreService {
           
           <!-- Main Content -->
           <div class="main-content">
-            <!-- Course Image -->
-            <div class="course-image">
-              <img src="/lapangan.png" alt="Golf Course" />
-              <div class="logo-overlay">
-                <img src="/logo-app.png" alt="Logo" />
+            <!-- Course Images (Two Photos Stacked) -->
+            <div class="course-images">
+              <div class="course-image-top">
+                <img src="/lapangan1.png" alt="Golf Course 1" />
+                <div class="logo-overlay">
+                  <img src="/logo-app.png" alt="Logo" />
+                </div>
+              </div>
+              <div class="course-image-bottom">
+                <img src="/lapangan2.png" alt="Golf Course 2" />
               </div>
             </div>
             
@@ -659,9 +685,9 @@ class PrintScoreService {
                 <table class="score-table">
                   <thead>
                     <tr class="header-out">
-                      <th style="text-align: left; padding-left: 2mm; min-width: 18mm;">OUT</th>
-                      ${outHoles.map(hole => `<th style="min-width: 6mm;">${hole.holeNumber}</th>`).join('')}
-                      <th style="background: rgba(97, 135, 64, 0.5) !important; min-width: 8mm;">OUT</th>
+                      <th style="text-align: left; padding-left: 2mm; width: 20mm;">OUT</th>
+                      ${outHoles.map(hole => `<th style="width: 5mm;">${hole.holeNumber}</th>`).join('')}
+                      <th style="background: rgba(97, 135, 64, 0.5) !important; width: 5mm;">OUT</th>
                     </tr>
                     <tr class="header-par">
                       <th style="text-align: left; padding-left: 2mm;">PAR</th>
@@ -670,27 +696,32 @@ class PrintScoreService {
                     </tr>
                   </thead>
                   <tbody>
-                    ${playersToDisplay.map(player => {
+                    ${playersToDisplay.map((player, idx) => {
+                      const isEmptyRow = !player.playerName;
                       const outScore = player.scores
                         .filter(s => s.holeNumber >= 1 && s.holeNumber <= 9)
                         .reduce((sum, s) => sum + s.strokes, 0);
                       
-                      const playerNameWords = player.playerName.trim().split(/\s+/).slice(0, 3).join(' ');
+                      const playerNameWords = player.playerName ? player.playerName.trim().split(/\s+/).slice(0, 3).join(' ') : '';
                       
                       return `
-                        <tr>
-                          <td class="player-name-cell" title="${player.playerName}">${playerNameWords}</td>
+                        <tr style="${idx % 2 === 0 ? 'background: white !important;' : 'background: rgba(249, 250, 251, 0.3) !important;'}">
+                          <td class="player-name-cell" title="${player.playerName}">
+                            ${!isEmptyRow ? `<div style="line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${playerNameWords}</div>` : '<div style="display: flex; align-items: center; justify-content: center; height: 100%;"><span style="color: #d1d5db;">-</span></div>'}
+                          </td>
                           ${outHoles.map(hole => {
                             const holeScore = player.scores.find(s => s.holeNumber === hole.holeNumber);
-                            if (holeScore) {
-                              return `<td class="score-cell">${renderScoreWithColor(holeScore.strokes, hole.par)}</td>`;
+                            if (!isEmptyRow && holeScore) {
+                              return `<td class="score-cell"><div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">${renderScoreWithColor(holeScore.strokes, hole.par)}</div></td>`;
                             }
-                            return `<td class="score-cell"><span style="font-size: 7px;">-</span></td>`;
+                            return `<td class="score-cell"><div style="display: flex; align-items: center; justify-content: center; height: 100%;"><span style="font-size: 8px; color: #d1d5db;">-</span></div></td>`;
                           }).join('')}
                           <td class="subtotal-cell">${
-                            scoreMode === 'over' 
-                              ? (outScore - outPar === 0 ? '0' : (outScore - outPar > 0 ? `+${outScore - outPar}` : outScore - outPar))
-                              : (outScore || '-')
+                            !isEmptyRow && outScore > 0 ? (
+                              scoreMode === 'over' 
+                                ? (outScore - outPar === 0 ? '0' : (outScore - outPar > 0 ? `+${outScore - outPar}` : outScore - outPar))
+                                : outScore
+                            ) : ''
                           }</td>
                         </tr>
                       `;
@@ -704,10 +735,10 @@ class PrintScoreService {
                 <table class="score-table">
                   <thead>
                     <tr class="header-in">
-                      <th style="text-align: left; padding-left: 2mm; min-width: 18mm;">IN</th>
-                      ${inHoles.map(hole => `<th style="min-width: 6mm;">${hole.holeNumber}</th>`).join('')}
-                      <th style="background: rgba(97, 135, 64, 0.5) !important; min-width: 8mm;">IN</th>
-                      <th style="background: linear-gradient(to right, #4b5563, #4b5563) !important; min-width: 10mm;">TOTAL</th>
+                      <th style="text-align: left; padding-left: 2mm; width: 20mm;">IN</th>
+                      ${inHoles.map(hole => `<th style="width: 5mm;">${hole.holeNumber}</th>`).join('')}
+                      <th style="background: rgba(97, 135, 64, 0.5) !important; width: 5mm;">IN</th>
+                      <th style="background: linear-gradient(to right, #4b5563, #4b5563) !important; width: 5mm;">TOT</th>
                     </tr>
                     <tr class="header-par">
                       <th style="text-align: left; padding-left: 2mm;">PAR</th>
@@ -717,45 +748,40 @@ class PrintScoreService {
                     </tr>
                   </thead>
                   <tbody>
-                    ${playersToDisplay.map(player => {
+                    ${playersToDisplay.map((player, idx) => {
+                      const isEmptyRow = !player.playerName;
                       const inScore = player.scores
                         .filter(s => s.holeNumber >= 10 && s.holeNumber <= 18)
                         .reduce((sum, s) => sum + s.strokes, 0);
                       
-                      const playerNameWords = player.playerName.trim().split(/\s+/).slice(0, 3).join(' ');
+                      const playerNameWords = player.playerName ? player.playerName.trim().split(/\s+/).slice(0, 3).join(' ') : '';
                       
                       return `
-                        <tr>
-                          <td class="player-name-cell" title="${player.playerName}">${playerNameWords}</td>
+                        <tr style="${idx % 2 === 0 ? 'background: white !important;' : 'background: rgba(249, 250, 251, 0.3) !important;'}">
+                          <td class="player-name-cell" title="${player.playerName}">
+                            ${!isEmptyRow ? `<div style="line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${playerNameWords}</div>` : '<div style="display: flex; align-items: center; justify-content: center; height: 100%;"><span style="color: #d1d5db;">-</span></div>'}
+                          </td>
                           ${inHoles.map(hole => {
                             const holeScore = player.scores.find(s => s.holeNumber === hole.holeNumber);
-                            if (holeScore) {
-                              return `<td class="score-cell">${renderScoreWithColor(holeScore.strokes, hole.par)}</td>`;
+                            if (!isEmptyRow && holeScore) {
+                              return `<td class="score-cell"><div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">${renderScoreWithColor(holeScore.strokes, hole.par)}</div></td>`;
                             }
-                            return `<td class="score-cell"><span style="font-size: 7px;">-</span></td>`;
+                            return `<td class="score-cell"><div style="display: flex; align-items: center; justify-content: center; height: 100%;"><span style="font-size: 8px; color: #d1d5db;">-</span></div></td>`;
                           }).join('')}
                           <td class="subtotal-cell">${
-                            scoreMode === 'over'
-                              ? (inScore - inPar === 0 ? '0' : (inScore - inPar > 0 ? `+${inScore - inPar}` : inScore - inPar))
-                              : (inScore || '-')
+                            !isEmptyRow && inScore > 0 ? (
+                              scoreMode === 'over'
+                                ? (inScore - inPar === 0 ? '0' : (inScore - inPar > 0 ? `+${inScore - inPar}` : inScore - inPar))
+                                : inScore
+                            ) : ''
                           }</td>
-                          <td class="total-cell">${player.totalScore || '-'}</td>
+                          <td class="total-cell">${!isEmptyRow && player.totalScore ? player.totalScore : ''}</td>
                         </tr>
                       `;
                     }).join('')}
                   </tbody>
                 </table>
               </div>
-            </div>
-          </div>
-          
-          <!-- Background Photos Section (Always Show) -->
-          <div class="photos-section">
-            <div class="photo-item">
-              <img src="/background-1.jpg" alt="Golf Course Photo 1" />
-            </div>
-            <div class="photo-item">
-              <img src="/background-2.jpg" alt="Golf Course Photo 2" />
             </div>
           </div>
           
