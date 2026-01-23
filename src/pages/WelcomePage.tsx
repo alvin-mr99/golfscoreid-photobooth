@@ -172,7 +172,7 @@ export function WelcomePage() {
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className="text-gray-800 font-semibold text-lg">
-                  Type flight name or player name to search
+                  Type flight name, player name, or 4-digit code to search
                 </span>
               </div>
             </div>

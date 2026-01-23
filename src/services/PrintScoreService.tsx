@@ -181,7 +181,7 @@ class PrintScoreService {
         ${isPrint ? '@media print {' : ''}
           @page {
             size: 152mm 102mm landscape;
-            margin: 0;
+            margin: 2mm;
           }
           
           * {
@@ -217,11 +217,12 @@ class PrintScoreService {
           }
           
           .print-body {
-            padding: 3mm;
+            padding: 3mm 1.5mm 1.5mm 1.5mm;
             height: 100%;
             display: flex;
             flex-direction: column;
-            gap: 1.5mm;
+            gap: 0.5mm;
+            position: relative;
           }
           
           /* Header Section */
@@ -229,16 +230,17 @@ class PrintScoreService {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 3mm;
-            padding-bottom: 1mm;
+            gap: 2mm;
+            padding-bottom: 0.8mm;
             border-bottom: 1.5px solid #e5e7eb;
             flex-shrink: 0;
+            min-height: 9mm;
           }
           
           .header-left {
             display: flex;
             align-items: center;
-            gap: 2mm;
+            gap: 1.5mm;
             flex: 1;
           }
           
@@ -247,19 +249,19 @@ class PrintScoreService {
           }
           
           .logo-container img {
-            width: 10mm;
-            height: 10mm;
+            width: 6mm;
+            height: 6mm;
             object-fit: contain;
           }
           
           .header-title {
-            font-size: 13px;
+            font-size: 9px;
             font-weight: 900;
             background: linear-gradient(to right, #618740, #618740);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin: 0 0 0.5mm 0;
+            margin: 0 0 0.2mm 0;
             line-height: 1;
             text-align: left;
           }
@@ -267,14 +269,14 @@ class PrintScoreService {
           .header-datetime {
             display: flex;
             align-items: center;
-            gap: 1mm;
+            gap: 0.8mm;
             color: #374151;
-            font-size: 7px;
+            font-size: 5.5px;
           }
           
           .header-datetime svg {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             color: #618740;
             flex-shrink: 0;
           }
@@ -284,28 +286,42 @@ class PrintScoreService {
           }
           
           .header-right {
+            display: flex;
+            align-items: center;
+            gap: 3mm;
+          }
+          
+          .legend-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 1mm;
+            flex-wrap: wrap;
+          }
+          
+          .player-info {
             text-align: right;
           }
           
           .total-score {
-            font-size: 22px;
+            font-size: 16px;
             font-weight: 900;
             background: linear-gradient(to right, #000000, #000000);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1;
-            margin-bottom: 0.5mm;
+            margin-bottom: 0.2mm;
           }
           
           .player-name-header {
-            font-size: 9px;
+            font-size: 7.5px;
             font-weight: bold;
             color: #1f2937;
           }
           
           .player-handicap {
-            font-size: 7px;
+            font-size: 5.5px;
             color: #6b7280;
             font-weight: 500;
           }
@@ -316,6 +332,7 @@ class PrintScoreService {
             gap: 2mm;
             flex: 1;
             min-height: 0;
+            position: relative;
           }
           
           .course-images {
@@ -326,7 +343,7 @@ class PrintScoreService {
           }
           
           .course-image-top {
-            height: 42mm;
+            height: 44mm;
             position: relative;
             border-radius: 2mm;
             overflow: hidden;
@@ -334,7 +351,7 @@ class PrintScoreService {
           }
           
           .course-image-bottom {
-            height: 28mm;
+            height: 35mm;
             position: relative;
             border-radius: 2mm;
             overflow: hidden;
@@ -361,17 +378,17 @@ class PrintScoreService {
           }
           
           .logo-overlay img {
-            width: 12mm;
-            height: 12mm;
+            width: 6mm;
+            height: 6mm;
             object-fit: contain;
-            transform: scale(1.6);
+            transform: scale(1.3);
           }
           
           .score-tables {
             width: 75%;
             display: flex;
             flex-direction: column;
-            gap: 1mm;
+            gap: 0.2mm;
             height: 100%;
           }
           
@@ -379,27 +396,24 @@ class PrintScoreService {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 1.5mm;
-            padding: 0.8mm 1.5mm;
-            background: white;
-            border-radius: 1.5mm;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            flex-shrink: 0;
+            gap: 1mm;
+            flex-wrap: wrap;
+            margin-bottom : -16px;
           }
           
           .legend-item {
             display: flex;
             align-items: center;
-            gap: 0.8mm;
+            gap: 0.5mm;
           }
           
           .legend-item svg {
-            width: 9px;
-            height: 9px;
+            width: 7px;
+            height: 7px;
           }
           
           .legend-item span {
-            font-size: 6.5px;
+            font-size: 5.5px;
             font-weight: bold;
             color: #374151;
           }
@@ -421,7 +435,7 @@ class PrintScoreService {
           }
           
           .score-table th {
-            padding: 1mm;
+            padding: 0.5mm;
             text-align: center;
             border: 0.5px solid rgba(97, 135, 64, 0.5);
             font-weight: bold;
@@ -437,8 +451,9 @@ class PrintScoreService {
           .header-out, .header-in {
             background: linear-gradient(to right, #618740, #618740) !important;
             color: white !important;
-            font-size: 8px;
-            height: 4mm;
+            font-size: 7px;
+            height: 1.5mm;
+            padding: 0.3mm 1mm;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -446,8 +461,9 @@ class PrintScoreService {
           .header-par {
             background: #9ca3af !important;
             color: #000000 !important;
-            font-size: 8px;
-            height: 3.5mm;
+            font-size: 7px;
+            height: 1.5mm;
+            padding: 0.3mm 1mm;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -455,7 +471,7 @@ class PrintScoreService {
           .player-name-cell {
             text-align: left !important;
             font-weight: bold;
-            padding: 1mm 2mm !important;
+            padding: 0.5mm 2mm !important;
             font-size: 8px;
             color: #1f2937;
             width: 20mm;
@@ -466,7 +482,7 @@ class PrintScoreService {
           
           .score-table tbody tr {
             background: white !important;
-            height: 5mm;
+            height: 3.5mm;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -490,7 +506,7 @@ class PrintScoreService {
             width: 100%;
             height: 100%;
             min-width: 5mm;
-            padding: 1.5mm 0;
+            padding: 1mm 0;
           }
           
           .score-bg-eagle {
@@ -533,7 +549,7 @@ class PrintScoreService {
             color: #ffffff !important;
             font-weight: bold;
             font-size: 8px;
-            padding: 1mm !important;
+            padding: 0.5mm !important;
             width: 5mm;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -544,7 +560,7 @@ class PrintScoreService {
             color: #1f2937 !important;
             font-weight: bold;
             font-size: 8px;
-            padding: 1mm !important;
+            padding: 0.5mm !important;
             width: 5mm;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -552,37 +568,45 @@ class PrintScoreService {
           
           /* Footer */
           .print-footer {
-            padding-top: 1mm;
-            border-top: 1.5px solid #e5e7eb;
+            position: absolute;
+            bottom: 2mm;
+            left: 2mm;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 1mm;
             font-size: 6px;
             color: #6b7280;
-            flex-shrink: 0;
+            z-index: 10;
           }
           
-          .footer-left, .footer-right {
+          .footer-content {
             display: flex;
             align-items: center;
-            gap: 1.5mm;
+            gap: 1mm;
           }
           
-          .footer-left img {
-            width: 5mm;
-            height: 5mm;
+          .footer-content img {
+            width: 4mm;
+            height: 4mm;
             object-fit: contain;
           }
           
-          .footer-left svg, .footer-right svg {
-            width: 7px;
-            height: 7px;
-            color: #618740;
-            flex-shrink: 0;
+          .footer-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2mm;
           }
           
-          .footer-left span, .footer-right span {
-            font-weight: 600;
+          .footer-brand {
+            font-size: 6px;
+            font-weight: bold;
+            color: #1f2937;
+          }
+          
+          .footer-company {
+            font-size: 6px;
+             font-weight: bold;
+            color: #6b7280;
           }
         ${isPrint ? '}' : ''}
       </style>
@@ -607,7 +631,7 @@ class PrintScoreService {
                           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   <span>${formatDate(scoreData.teeOffTime)}</span>
-                  <span style="margin: 0 8px;">•</span>
+                  <span style="margin: 0 6px;">•</span>
                   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -616,15 +640,52 @@ class PrintScoreService {
                 </div>
               </div>
             </div>
-            ${playersToDisplay.length > 0 ? `
-              <div class="header-right">
-                <div class="total-score">${playersToDisplay[0].totalScore || '-'}</div>
-                <div class="player-name-header">${playersToDisplay[0].playerName}</div>
-                ${playersToDisplay[0].handicap !== undefined ? `
-                  <div class="player-handicap">HCP: ${playersToDisplay[0].handicap}</div>
-                ` : ''}
+            <div class="header-right">
+              <!-- Legend -->
+              <div class="legend-container">
+                <div class="legend-item">
+                  <svg width="7" height="7" viewBox="0 0 28 28">
+                    <circle cx="14" cy="14" r="12" fill="#fcd34d" stroke="#1f2937" stroke-width="0.8"/>
+                    <circle cx="14" cy="14" r="8" fill="none" stroke="#1f2937" stroke-width="0.8"/>
+                  </svg>
+                  <span>Eagle</span>
+                </div>
+                <div class="legend-item">
+                  <svg width="7" height="7" viewBox="0 0 28 28">
+                    <path d="M14 3 L25 23 L3 23 Z" fill="#4ade80" stroke="#1f2937" stroke-width="0.8"/>
+                  </svg>
+                  <span>Birdie</span>
+                </div>
+                <div class="legend-item">
+                  <svg width="7" height="7" viewBox="0 0 28 28">
+                    <circle cx="14" cy="14" r="10" fill="#ffffff" stroke="#1f2937" stroke-width="0.8"/>
+                  </svg>
+                  <span>Par</span>
+                </div>
+                <div class="legend-item">
+                  <svg width="7" height="7" viewBox="0 0 28 28">
+                    <rect x="3" y="3" width="22" height="22" fill="#fdba74" stroke="#1f2937" stroke-width="0.8"/>
+                  </svg>
+                  <span>Bogey</span>
+                </div>
+                <div class="legend-item">
+                  <svg width="7" height="7" viewBox="0 0 28 28">
+                    <rect x="2" y="2" width="24" height="24" fill="#f87171" stroke="#1f2937" stroke-width="0.8"/>
+                    <rect x="7" y="7" width="14" height="14" fill="none" stroke="#1f2937" stroke-width="0.8"/>
+                  </svg>
+                  <span>Doubles+</span>
+                </div>
               </div>
-            ` : ''}
+              ${playersToDisplay.length > 0 ? `
+                <div class="player-info">
+                  <div class="total-score">${playersToDisplay[0].totalScore || '-'}</div>
+                  <div class="player-name-header">${playersToDisplay[0].playerName}</div>
+                  ${playersToDisplay[0].handicap !== undefined ? `
+                    <div class="player-handicap">HCP: ${playersToDisplay[0].handicap}</div>
+                  ` : ''}
+                </div>
+              ` : ''}
+            </div>
           </div>
           
           <!-- Main Content -->
@@ -644,42 +705,6 @@ class PrintScoreService {
             
             <!-- Score Tables -->
             <div class="score-tables">
-              <!-- Legend -->
-              <div class="legend-container">
-                <div class="legend-item">
-                  <svg width="8" height="8" viewBox="0 0 28 28">
-                    <circle cx="14" cy="14" r="12" fill="#fcd34d" stroke="#1f2937" stroke-width="0.8"/>
-                    <circle cx="14" cy="14" r="8" fill="none" stroke="#1f2937" stroke-width="0.8"/>
-                  </svg>
-                  <span>Eagle</span>
-                </div>
-                <div class="legend-item">
-                  <svg width="8" height="8" viewBox="0 0 28 28">
-                    <path d="M14 3 L25 23 L3 23 Z" fill="#4ade80" stroke="#1f2937" stroke-width="0.8"/>
-                  </svg>
-                  <span>Birdie</span>
-                </div>
-                <div class="legend-item">
-                  <svg width="8" height="8" viewBox="0 0 28 28">
-                    <circle cx="14" cy="14" r="10" fill="#ffffff" stroke="#1f2937" stroke-width="0.8"/>
-                  </svg>
-                  <span>Par</span>
-                </div>
-                <div class="legend-item">
-                  <svg width="8" height="8" viewBox="0 0 28 28">
-                    <rect x="3" y="3" width="22" height="22" fill="#fdba74" stroke="#1f2937" stroke-width="0.8"/>
-                  </svg>
-                  <span>Bogey</span>
-                </div>
-                <div class="legend-item">
-                  <svg width="8" height="8" viewBox="0 0 28 28">
-                    <rect x="2" y="2" width="24" height="24" fill="#f87171" stroke="#1f2937" stroke-width="0.8"/>
-                    <rect x="7" y="7" width="14" height="14" fill="none" stroke="#1f2937" stroke-width="0.8"/>
-                  </svg>
-                  <span>Doubles+</span>
-                </div>
-              </div>
-              
               <!-- OUT Table -->
               <div class="score-table-container">
                 <table class="score-table">
@@ -738,7 +763,7 @@ class PrintScoreService {
                       <th style="text-align: left; padding-left: 2mm; width: 20mm;">IN</th>
                       ${inHoles.map(hole => `<th style="width: 5mm;">${hole.holeNumber}</th>`).join('')}
                       <th style="background: rgba(97, 135, 64, 0.5) !important; width: 5mm;">IN</th>
-                      <th style="background: linear-gradient(to right, #4b5563, #4b5563) !important; width: 5mm;">TOT</th>
+                      <th style="background: linear-gradient(to right, #4b5563, #4b5563) !important; width: 5mm;">TOTAL</th>
                     </tr>
                     <tr class="header-par">
                       <th style="text-align: left; padding-left: 2mm;">PAR</th>
@@ -787,16 +812,11 @@ class PrintScoreService {
           
           <!-- Footer -->
           <div class="print-footer">
-            <div class="footer-left">
+            <div class="footer-content">
               <img src="/icon.png" alt="GolfScoreID Icon" />
-              <span>GolfScoreID Created by PT DECOM FENO MAHAKA</span>
-            </div>
-            <div class="footer-right">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Printed: ${formatCurrentDateTime()}</span>
+              <div class="footer-text">
+                <div class="footer-brand">GolfScoreID <span class="footer-company"> by DECOM FENO MAHAKA</span> </div>
+              </div>
             </div>
           </div>
         </div>

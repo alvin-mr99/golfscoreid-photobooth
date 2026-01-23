@@ -11,6 +11,7 @@ export interface Flight {
   course_id?: string;
   players: FlightPlayer[];
   created_at: number;
+  verification_code?: string; // 4-digit verification code
 }
 
 export interface FlightPlayer {

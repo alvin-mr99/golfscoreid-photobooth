@@ -34,6 +34,11 @@ export function FlightSelector({ flights, onSelect, isLoading }: FlightSelectorP
 
     const query = searchQuery.toLowerCase();
     return flights.filter(flight => {
+      // Search in verification code (4-digit code)
+      if (flight.verification_code && flight.verification_code.includes(query)) {
+        return true;
+      }
+
       // Search in flight name
       if (flight.flight_name.toLowerCase().includes(query)) {
         return true;
@@ -85,7 +90,7 @@ export function FlightSelector({ flights, onSelect, isLoading }: FlightSelectorP
             setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
-          placeholder="Search flight or player name..."
+          placeholder="Search by flight name, player name, or 4-digit code..."
           disabled={isLoading}
           className="w-full px-6 py-6 text-2xl border-2 border-white/30 rounded-2xl 
                    bg-white/90 backdrop-blur-sm
@@ -128,9 +133,16 @@ export function FlightSelector({ flights, onSelect, isLoading }: FlightSelectorP
             >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-                    {flight.flight_name}
-                  </h3>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-2xl font-semibold text-gray-800">
+                      {flight.flight_name}
+                    </h3>
+                    {flight.verification_code && (
+                      <span className="inline-block px-3 py-1 bg-green-500 text-white text-sm font-bold rounded-lg">
+                        #{flight.verification_code}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-base text-gray-600 mb-3">
                     Tee Off: {formatTeeOffTime(flight.tee_off_time)}
                   </p>

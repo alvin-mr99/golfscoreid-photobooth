@@ -406,7 +406,7 @@ export function ScoreDisplayNew({
                   src="/logo-app.png" 
                   alt="Logo" 
                   className="w-20 h-20 object-contain"
-                  style={{ transform: 'scale(1.6)'}}
+                  style={{ transform: 'scale(1.3)'}}
                 />
               </div>
             </div>
@@ -549,7 +549,7 @@ export function ScoreDisplayNew({
                       </th>
                     ))}
                     <th className="px-1 py-1 text-center font-bold border border-[#618740]/50 bg-[#618740]/50 text-[17px]" style={{ width: '35px' }}>IN</th>
-                    <th className="px-1 py-1 text-center font-bold border border-green-700/50 bg-gradient-to-r from-gray-700 to-gray-700 text-[17px]" style={{ width: '35px' }}>TOT</th>
+                    <th className="px-1 py-1 text-center font-bold border border-green-700/50 bg-gradient-to-r from-gray-700 to-gray-700 text-[17px]" style={{ width: '35px' }}>TOTAL</th>
                   </tr>
                   <tr className="bg-gray-400 text-black" style={{ height: '28px' }}>
                     <th className="px-2 py-1 text-left font-semibold border border-green-600/50 text-[17px]">PAR</th>
